@@ -11,7 +11,6 @@ import {
 import argon2 from "argon2";
 import { MyContext } from "../types";
 import { User } from "../entities/User";
-import { Post } from "src/entities/Post";
 
 @InputType()
 class UsernamePasswordInput {

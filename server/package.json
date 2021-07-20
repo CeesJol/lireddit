@@ -16,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/connect-redis": "^0.0.17",
+    "@types/cors": "^2.8.12",
     "@types/express-session": "^1.17.4",
     "@types/node": "^16.3.3",
     "@types/redis": "^2.8.31",
@@ -34,6 +35,7 @@
     "apollo-server-express": "^2.16.1",
     "argon2": "^0.28.2",
     "connect-redis": "^6.0.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "graphql": "^15.5.1",
