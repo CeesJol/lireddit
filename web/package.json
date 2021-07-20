@@ -12,6 +12,7 @@
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
     "@urql/core": "^2.1.5",
+    "@urql/exchange-graphcache": "^4.2.1",
     "formik": "^2.2.9",
     "framer-motion": "^4.0.3",
     "graphql": "^15.5.1",
