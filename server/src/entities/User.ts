@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
   Column,
   BaseEntity,
-  ManyToOne,
   OneToMany,
 } from "typeorm";
 import { Post } from "./Post";
