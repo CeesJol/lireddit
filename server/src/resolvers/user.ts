@@ -11,9 +11,11 @@ import argon2 from "argon2";
 import { MyContext } from "../types";
 import { User } from "../entities/User";
 import { EntityManager } from "@mikro-orm/postgresql";
-import { COOKIE_NAME } from "../constants";
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { validateRegister } from "../util/validateRegister";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { sendEmail } from "../util/sendEmail";
+import { v4 } from "uuid";
 
 @ObjectType()
 class FieldError {
@@ -34,12 +36,87 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
-  // @Mutation(() => Boolean)
-  // async forgotPassword(@Arg("email") email: string, @Ctx() { em }: MyContext) {
-  //   const user = await em.findOne(User, { email });
-  //   console.log(user);
-  //   return true;
-  // }
+  @Mutation(() => UserResponse)
+  async changePassword(
+    @Arg("token") token: string,
+    @Arg("newPassword") newPassword: string,
+    @Ctx() { em, redis, req }: MyContext
+  ): Promise<UserResponse> {
+    if (newPassword.length <= 2) {
+      return {
+        errors: [
+          {
+            field: "newPassword",
+            message: "Length must be greater than 2",
+          },
+        ],
+      };
+    }
+
+    const key = FORGET_PASSWORD_PREFIX + token;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "Token expired",
+          },
+        ],
+      };
+    }
+
+    const user = await em.findOne(User, { id: parseInt(userId) });
+
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "User no longer exists",
+          },
+        ],
+      };
+    }
+
+    user.password = await argon2.hash(newPassword);
+    await em.persistAndFlush(user);
+
+    await redis.del(key);
+
+    // log in user after change password
+    req.session.userId = user.id;
+
+    return { user };
+  }
+
+  @Mutation(() => Boolean)
+  async forgotPassword(
+    @Arg("email") email: string,
+    @Ctx() { em, redis }: MyContext
+  ) {
+    const user = await em.findOne(User, { email });
+    if (!user) {
+      // the email is not in the db
+      return true;
+    }
+
+    const token = v4();
+
+    await redis.set(
+      FORGET_PASSWORD_PREFIX + token,
+      user.id,
+      "ex",
+      1000 * 60 * 60 * 24 * 3
+    ); // 3 days
+
+    sendEmail(
+      email,
+      `<a href="http://localhost:3000/change-password/${token}">reset password</a>`
+    );
+
+    return true;
+  }
 
   @Query(() => User, { nullable: true })
   async me(@Ctx() { req, em }: MyContext): Promise<User | null> {
@@ -79,7 +156,6 @@ export class UserResolver {
         })
         .returning("*");
       user = result[0];
-      console.log("user:", user);
     } catch (err) {
       console.log("err:", err);
       // || err.detail.includes("already exists")) {
