@@ -104,32 +104,72 @@ export class PostResolver {
   @Query(() => PaginatedPosts)
   async posts(
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+    @Ctx() { req }: MyContext
   ): Promise<PaginatedPosts> {
     // 20 -> 21
     const realLimit = Math.min(50, limit);
     const reaLimitPlusOne = realLimit + 1;
 
-    const replacements: any[] = [reaLimitPlusOne];
+    const replacements: any[] = [reaLimitPlusOne, req.session.userId || 0];
+    console.log("replacements:", replacements);
+    console.log("req.session.userId:", req.session.userId);
+    console.log(req.session);
 
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
+    } else {
+      replacements.push(new Date());
     }
+
+    // const posts = await getConnection().query(
+    //   `
+    // select p.*,
+    // json_build_object(
+    //   'id', u.id,
+    //   'username', u.username,
+    //   'email', u.email,
+    //   'createdAt', u."createdAt",
+    //   'updatedAt', u."updatedAt"
+    //   ) creator,
+    // ${
+    //   req.session.userId
+    //     ? '(select value from updoot where "userId" = $2 and "postId" = p.id) "voteStatus"'
+    //     : 'null as "voteStatus"'
+    // }
+    // from post p
+    // inner join public.user u on u.id = p."creatorId"
+    // ${cursor ? `where p."createdAt" < $3` : `where p."createdAt" < $3`}
+    // order by p."createdAt" DESC
+    // limit $1
+    // `,
+    //   replacements
+    // );
 
     const posts = await getConnection().query(
       `
-      select p.*, 
-      json_build_object(
-        'id', u.id,
-        'username', u.username,
-        'email', u.email,
-        'createdAt', u."createdAt"
-      ) creator
-      from post p
-      inner join public.user u on u.id = p."creatorId"
-      ${cursor ? `where p."createdAt" < $2` : ``}
-      order by p."createdAt" DESC
-      limit $1
+    select p.*,
+    json_build_object(
+      'id', u.id,
+      'username', u.username,
+      'email', u.email,
+      'createdAt', u."createdAt",
+      'updatedAt', u."updatedAt"
+      ) creator,
+      ${
+        req.session.userId
+          ? '(select value from updoot where "userId" = $2 and "postId" = p.id) "voteStatus"'
+          : 'null as "voteStatus"'
+      }
+    from post p
+    inner join public.user u on u.id = p."creatorId"
+    ${
+      cursor
+        ? `where p."createdAt" < $3 and $2 = $2`
+        : `where p."createdAt" < $3 and $2 = $2`
+    }
+    order by p."createdAt" DESC
+    limit $1
     `,
       replacements
     );
