@@ -11,12 +11,14 @@ import {
   FieldResolver,
   Root,
   ObjectType,
+  Info,
 } from "type-graphql";
 import { Post } from "../entities/Post";
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
 import { Updoot } from "../entities/Updoot";
+import { tmpdir } from "os";
 
 @InputType()
 class PostInput {
@@ -60,19 +62,19 @@ export class PostResolver {
       await getConnection().transaction(async (tm) => {
         await tm.query(
           `
-        update updoot 
-        set value = $1
-        where "postId" = $2 and "userId" = $3
+    update updoot
+    set value = $1
+    where "postId" = $2 and "userId" = $3
         `,
           [realValue, postId, userId]
         );
 
         await tm.query(
           `
-        update post
-        set points = points + $1
-        where id = $2
-      `,
+          update post
+          set points = points + $1
+          where id = $2
+        `,
           [2 * realValue, postId]
         );
       });
@@ -81,23 +83,22 @@ export class PostResolver {
       await getConnection().transaction(async (tm) => {
         await tm.query(
           `
-        insert into updoot ("userId", "postId", value)
-        values ($1, $2, $3)
+    insert into updoot ("userId", "postId", value)
+    values ($1, $2, $3)
         `,
           [userId, postId, realValue]
         );
 
         await tm.query(
           `
-        update post
-        set points = points + $1
-        where id = $2
+    update post
+    set points = points + $1
+    where id = $2
       `,
           [realValue, postId]
         );
       });
     }
-
     return true;
   }
 
@@ -111,40 +112,17 @@ export class PostResolver {
     const realLimit = Math.min(50, limit);
     const reaLimitPlusOne = realLimit + 1;
 
-    const replacements: any[] = [reaLimitPlusOne, req.session.userId || 0];
-    console.log("replacements:", replacements);
-    console.log("req.session.userId:", req.session.userId);
-    console.log(req.session);
+    const replacements: any[] = [reaLimitPlusOne];
 
-    if (cursor) {
-      replacements.push(new Date(parseInt(cursor)));
-    } else {
-      replacements.push(new Date());
+    if (req.session.userId) {
+      replacements.push(req.session.userId);
     }
 
-    // const posts = await getConnection().query(
-    //   `
-    // select p.*,
-    // json_build_object(
-    //   'id', u.id,
-    //   'username', u.username,
-    //   'email', u.email,
-    //   'createdAt', u."createdAt",
-    //   'updatedAt', u."updatedAt"
-    //   ) creator,
-    // ${
-    //   req.session.userId
-    //     ? '(select value from updoot where "userId" = $2 and "postId" = p.id) "voteStatus"'
-    //     : 'null as "voteStatus"'
-    // }
-    // from post p
-    // inner join public.user u on u.id = p."creatorId"
-    // ${cursor ? `where p."createdAt" < $3` : `where p."createdAt" < $3`}
-    // order by p."createdAt" DESC
-    // limit $1
-    // `,
-    //   replacements
-    // );
+    let cursorIdx = 3;
+    if (cursor) {
+      replacements.push(new Date(parseInt(cursor)));
+      cursorIdx = replacements.length;
+    }
 
     const posts = await getConnection().query(
       `
@@ -156,18 +134,14 @@ export class PostResolver {
       'createdAt', u."createdAt",
       'updatedAt', u."updatedAt"
       ) creator,
-      ${
-        req.session.userId
-          ? '(select value from updoot where "userId" = $2 and "postId" = p.id) "voteStatus"'
-          : 'null as "voteStatus"'
-      }
+    ${
+      req.session.userId
+        ? '(select value from updoot where "userId" = $2 and "postId" = p.id) "voteStatus"'
+        : 'null as "voteStatus"'
+    }
     from post p
     inner join public.user u on u.id = p."creatorId"
-    ${
-      cursor
-        ? `where p."createdAt" < $3 and $2 = $2`
-        : `where p."createdAt" < $3 and $2 = $2`
-    }
+    ${cursor ? `where p."createdAt" < $${cursorIdx}` : ""}
     order by p."createdAt" DESC
     limit $1
     `,
@@ -177,7 +151,7 @@ export class PostResolver {
     // const qb = getConnection()
     //   .getRepository(Post)
     //   .createQueryBuilder("p")
-    //   .innerJoinAndSelect('p.creator", "u", "u.id = p."creatorId"')
+    //   .innerJoinAndSelect("p.creator", "u", 'u.id = p."creatorId"')
     //   .orderBy('p."createdAt"', "DESC")
     //   .take(reaLimitPlusOne);
 
@@ -188,7 +162,7 @@ export class PostResolver {
     // }
 
     // const posts = await qb.getMany();
-    // console.log("posts:", posts);
+    // console.log("posts: ", posts);
 
     return {
       posts: posts.slice(0, realLimit),

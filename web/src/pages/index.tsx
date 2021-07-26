@@ -1,21 +1,19 @@
-import { withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../util/createUrqlClient";
-import { usePostsQuery } from "../generated/graphql";
-import { Layout } from "../components/Layout";
 import {
+  Box,
+  Button,
+  Flex,
+  Heading,
   Link,
   Stack,
-  Box,
-  Heading,
   Text,
-  Flex,
-  Button,
-  IconButton,
 } from "@chakra-ui/react";
+import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import React, { useState } from "react";
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { Layout } from "../components/Layout";
 import UpdootSection from "../components/UpdootSection";
+import { usePostsQuery } from "../generated/graphql";
+import { createUrqlClient } from "../util/createUrqlClient";
 
 const Index = () => {
   const [variables, setVariables] = useState({
