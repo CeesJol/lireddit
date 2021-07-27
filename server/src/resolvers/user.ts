@@ -11,7 +11,8 @@ import {
 } from "type-graphql";
 import { MyContext } from "../types";
 import { User } from "../entities/User";
-import argon2 from "argon2";
+// rip argon2
+// import argon2 from "argon2";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../util/validateRegister";
@@ -92,10 +93,17 @@ export class UserResolver {
       };
     }
 
+    // rip argon2
+    // await User.update(
+    //   { id: userIdNum },
+    //   {
+    //     password: await argon2.hash(newPassword),
+    //   }
+    // );
     await User.update(
       { id: userIdNum },
       {
-        password: await argon2.hash(newPassword),
+        password: newPassword,
       }
     );
 
@@ -155,7 +163,9 @@ export class UserResolver {
       return { errors };
     }
 
-    const hashedPassword = await argon2.hash(options.password);
+    // rip argon2
+    // const hashedPassword = await argon2.hash(options.password);
+    const hashedPassword = options.password;
     let user;
     try {
       // User.create({}).save()
@@ -215,7 +225,9 @@ export class UserResolver {
         ],
       };
     }
-    const valid = await argon2.verify(user.password, password);
+    // rip argon2
+    // const valid = await argon2.verify(user.password, password);
+    const valid = user.password === password;
     if (!valid) {
       return {
         errors: [
