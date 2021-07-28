@@ -15,14 +15,14 @@ import { useGetIntId } from "../../../util/useGetIntId";
 export const EditPost = ({}) => {
   const router = useRouter();
   const intId = useGetIntId();
-  const [{ data, error, fetching }] = usePostQuery({
-    pause: intId === -1,
+  const { data, loading } = usePostQuery({
+    skip: intId === -1,
     variables: {
       id: intId,
     },
   });
-  const [{}, updatePost] = useUpdatePostMutation();
-  if (fetching) {
+  const [updatePost] = useUpdatePostMutation();
+  if (loading) {
     return (
       <Layout>
         <div>loading...</div>
@@ -43,7 +43,7 @@ export const EditPost = ({}) => {
       <Formik
         initialValues={{ title: data.post.title, text: data.post.text }}
         onSubmit={async (values) => {
-          await updatePost({ id: intId, ...values });
+          await updatePost({ variables: { id: intId, ...values } });
           router.back();
         }}
       >
@@ -75,4 +75,4 @@ export const EditPost = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(EditPost);
+export default EditPost;

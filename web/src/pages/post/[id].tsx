@@ -7,9 +7,9 @@ import { createUrqlClient } from "../../util/createUrqlClient";
 import { useGetPostFromUrl } from "../../util/useGetPostFromUrl";
 
 export const Post = ({}) => {
-  const [{ data, fetching }] = useGetPostFromUrl();
+  const { data, loading } = useGetPostFromUrl();
 
-  if (fetching) {
+  if (loading) {
     return (
       <Layout>
         <div>loading...</div>
@@ -17,7 +17,7 @@ export const Post = ({}) => {
     );
   }
 
-  if (fetching) {
+  if (loading) {
     return (
       <Layout>
         <div>loading...</div>
@@ -45,4 +45,4 @@ export const Post = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient, { ssr: true })(Post);
+export default Post;

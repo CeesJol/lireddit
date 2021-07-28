@@ -227,6 +227,7 @@ export class UserResolver {
     }
     // rip argon2
     // const valid = await argon2.verify(user.password, password);
+    console.log("user.password, password:", user.password, password);
     const valid = user.password === password;
     if (!valid) {
       return {
