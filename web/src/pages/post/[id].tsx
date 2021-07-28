@@ -1,4 +1,5 @@
 import { Box, Heading } from "@chakra-ui/react";
+import { withApollo } from "../../util/withApollo";
 import { withUrqlClient } from "next-urql";
 import React from "react";
 import EditDeletePostButtons from "../../components/EditDeletePostButtons";
@@ -45,4 +46,4 @@ export const Post = ({}) => {
   );
 };
 
-export default Post;
+export default withApollo({ ssr: true })(Post);
