@@ -7,13 +7,13 @@ import {
 } from "urql";
 import { pipe, tap } from "wonka";
 import {
-  DeletePostMutationVariables,
   LoginMutation,
   LogoutMutation,
   MeDocument,
   MeQuery,
   RegisterMutation,
   VoteMutationVariables,
+  DeletePostMutationVariables,
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import Router from "next/router";
@@ -69,13 +69,13 @@ const cursorPagination = (): Resolver => {
   };
 };
 
-const invalidateAllPosts = (cache: Cache) => {
+function invalidateAllPosts(cache: Cache) {
   const allFields = cache.inspectFields("Query");
   const fieldInfos = allFields.filter((info) => info.fieldName === "posts");
   fieldInfos.forEach((fi) => {
     cache.invalidate("Query", "posts", fi.arguments || {});
   });
-};
+}
 
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   let cookie = "";
