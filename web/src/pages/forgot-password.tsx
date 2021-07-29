@@ -6,6 +6,7 @@ import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
 import { useForgotPasswordMutation } from "../generated/graphql";
 import { createUrqlClient } from "../util/createUrqlClient";
+import { withApollo } from "../util/withApollo";
 
 const ForgotPassword: React.FC<{}> = ({}) => {
   const [complete, setComplete] = useState(false);

@@ -20,7 +20,8 @@ import { createUserLoader } from "./util/createUserLoader";
 import { createUpdootLoader } from "./util/createUpdootLoader";
 
 const main = async () => {
-  const conn = await createConnection({
+  // const conn =
+  await createConnection({
     type: "postgres",
     // database: "lireddit3",
     // username: "postgres",
