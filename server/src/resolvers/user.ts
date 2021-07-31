@@ -11,8 +11,7 @@ import {
 } from "type-graphql";
 import { MyContext } from "../types";
 import { User } from "../entities/User";
-// rip argon2
-// import argon2 from "argon2";
+import bcrypt from "bcrypt";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../util/validateRegister";
@@ -93,17 +92,11 @@ export class UserResolver {
       };
     }
 
-    // rip argon2
-    // await User.update(
-    //   { id: userIdNum },
-    //   {
-    //     password: await argon2.hash(newPassword),
-    //   }
-    // );
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     await User.update(
       { id: userIdNum },
       {
-        password: newPassword,
+        password: hashedPassword,
       }
     );
 
@@ -163,9 +156,8 @@ export class UserResolver {
       return { errors };
     }
 
-    // rip argon2
-    // const hashedPassword = await argon2.hash(options.password);
-    const hashedPassword = options.password;
+    const hashedPassword = await bcrypt.hash(options.password, 10);
+
     let user;
     try {
       // User.create({}).save()
@@ -225,10 +217,8 @@ export class UserResolver {
         ],
       };
     }
-    // rip argon2
-    // const valid = await argon2.verify(user.password, password);
-    console.log("user.password, password:", user.password, password);
-    const valid = user.password === password;
+
+    const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return {
         errors: [
