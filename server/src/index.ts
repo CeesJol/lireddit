@@ -14,14 +14,16 @@ import cors from "cors";
 import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
+import { Comment } from "./entities/Comment";
 import path from "path";
 import { Updoot } from "./entities/Updoot";
 import { createUserLoader } from "./util/createUserLoader";
 import { createUpdootLoader } from "./util/createUpdootLoader";
+import { CommentResolver } from "./resolvers/comment";
 
 const main = async () => {
   // const conn =
-  await createConnection({
+  const conn = await createConnection({
     type: "postgres",
     // database: "lireddit3",
     // username: "postgres",
@@ -30,9 +32,9 @@ const main = async () => {
     logging: true,
     // synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User, Updoot],
+    entities: [Post, User, Updoot, Comment],
   });
-  // await conn.runMigrations();
+  await conn.runMigrations();
 
   // await Post.delete({});
 
@@ -69,7 +71,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver],
+      resolvers: [HelloResolver, PostResolver, UserResolver, CommentResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({
