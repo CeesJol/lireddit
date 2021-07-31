@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Button, Heading } from "@chakra-ui/react";
 import { withApollo } from "../../util/withApollo";
 import { withUrqlClient } from "next-urql";
 import React from "react";
@@ -6,9 +6,17 @@ import EditDeletePostButtons from "../../components/EditDeletePostButtons";
 import Layout from "../../components/Layout";
 import { createUrqlClient } from "../../util/createUrqlClient";
 import { useGetPostFromUrl } from "../../util/useGetPostFromUrl";
-import { useGetCommentsQuery } from "../../generated/graphql";
+import {
+  useCreateCommentMutation,
+  useGetCommentsQuery,
+} from "../../generated/graphql";
+import { Form, Formik } from "formik";
+import { InputField } from "../../components/InputField";
+import { useRouter } from "next/router";
 
 export const Post = ({}) => {
+  const router = useRouter();
+  const [createComment] = useCreateCommentMutation();
   const { data, error, loading } = useGetPostFromUrl();
   const {
     data: data2,
@@ -54,6 +62,37 @@ export const Post = ({}) => {
           <div>{error2.message}</div>
         </>
       )}
+
+      <Formik
+        initialValues={{ text: "" }}
+        onSubmit={async (values) => {
+          await createComment({
+            variables: { text: values.text },
+            update: (cache) => {
+              cache.evict({ fieldName: "comments" });
+              router.reload();
+            },
+          });
+        }}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <Box mt={4}>
+              <InputField textarea name="text" placeholder="text..." />
+            </Box>
+            <Button
+              mt={4}
+              mb={4}
+              type="submit"
+              colorScheme="teal"
+              isLoading={isSubmitting}
+            >
+              Comment
+            </Button>
+          </Form>
+        )}
+      </Formik>
+
       {data2 && !loading2 && data2.comments.length === 0 && (
         <Box>There are no comments yet</Box>
       )}

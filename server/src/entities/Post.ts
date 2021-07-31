@@ -10,7 +10,6 @@ import {
   OneToMany,
 } from "typeorm";
 import { Updoot } from "./Updoot";
-import { Comment } from "./Comment";
 import { User } from "./User";
 
 @ObjectType()

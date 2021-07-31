@@ -6,6 +6,7 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
+import { getConnection } from "typeorm";
 import { Comment } from "../entities/Comment";
 import isAuth from "../middleware/isAuth";
 
@@ -24,7 +25,15 @@ export class CommentResolver {
 
   @Query(() => [Comment])
   async comments(): Promise<Comment[]> {
-    return Comment.find();
+    // return Comment.find();
+    const result = (await getConnection()
+      .createQueryBuilder()
+      .select("*")
+      .from("comment", "c")
+      .orderBy(`"createdAt"`, "DESC")
+      .execute()) as any;
+    console.log("result:", result);
+    return result;
   }
 
   @Mutation(() => Boolean)
