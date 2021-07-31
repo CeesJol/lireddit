@@ -24,7 +24,6 @@ export const EditDeletePostButtons: React.FC<EditDeletePostButtonsProps> = ({
         <IconButton
           as={Link}
           mr={4}
-          onClick={() => {}}
           aria-label="Edit Post"
           icon={<EditIcon size="24px" />}
         />

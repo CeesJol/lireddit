@@ -1,6 +1,7 @@
-query Posts($limit: Int!, $cursor: String) {
-  posts(limit: $limit, cursor: $cursor) {
+query Posts($limit: Int!, $cursor: String, $sort: String!, $offset: Int) {
+  posts(limit: $limit, cursor: $cursor, sort: $sort, offset: $offset) {
     hasMore
+    offset
     posts {
       ...PostSnippet
     }

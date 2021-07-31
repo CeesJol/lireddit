@@ -6,11 +6,11 @@ import { usePostsQuery } from "../generated/graphql";
 import { changeSort } from "../util/changeSort";
 import { withApollo } from "../util/withApollo";
 
-const Index = () => {
+const Top = () => {
   let { data, error, loading, fetchMore, variables } = usePostsQuery({
     variables: {
       limit: 15,
-      sort: "new",
+      sort: "top",
       cursor: null,
     },
     notifyOnNetworkStatusChange: true,
@@ -32,7 +32,7 @@ const Index = () => {
         placeholder="Select option"
         w={100}
         onChange={(event) => changeSort(event)}
-        value="new"
+        value="top"
       >
         <option value="new">New</option>
         <option value="top">Top</option>
@@ -51,9 +51,8 @@ const Index = () => {
               fetchMore({
                 variables: {
                   limit: variables?.limit,
-                  sort: "new",
-                  cursor:
-                    data!.posts.posts[data!.posts.posts.length - 1].createdAt,
+                  sort: "top",
+                  offset: data!.posts.offset + 15,
                 },
               });
             }}
@@ -69,4 +68,4 @@ const Index = () => {
   );
 };
 
-export default withApollo({ ssr: true })(Index);
+export default withApollo({ ssr: true })(Top);

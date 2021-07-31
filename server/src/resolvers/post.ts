@@ -33,6 +33,8 @@ class PaginatedPosts {
   posts: Post[];
   @Field()
   hasMore: boolean;
+  @Field()
+  offset: number;
 }
 
 @Resolver(Post)
@@ -127,7 +129,9 @@ export class PostResolver {
   @Query(() => PaginatedPosts)
   async posts(
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+    @Arg("sort", () => String) sort: string,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+    @Arg("offset", () => Int, { nullable: true }) offset: number | null
   ): Promise<PaginatedPosts> {
     // 20 -> 21
     const realLimit = Math.min(50, limit);
@@ -135,20 +139,31 @@ export class PostResolver {
 
     const replacements: any[] = [reaLimitPlusOne];
 
-    if (cursor) {
+    if (sort === "top") {
+      replacements.push(offset);
+    } else if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
     }
 
-    const posts = await getConnection().query(
-      `
-    select p.*
-    from post p
-    ${cursor ? `where p."createdAt" < $2` : ""}
-    order by p."createdAt" DESC
-    limit $1
-    `,
-      replacements
-    );
+    let query;
+    if (sort === "top") {
+      query = `
+        select p.*
+        from post p
+        order by p.points DESC
+        offset $2 rows
+        fetch next $1 rows only
+      `;
+    } else {
+      query = `
+        select p.*
+        from post p
+        ${cursor ? `where p."createdAt" < $2` : ""}
+        order by p."createdAt" DESC
+        limit $1
+      `;
+    }
+    const posts = await getConnection().query(query, replacements);
 
     // const qb = getConnection()
     //   .getRepository(Post)
@@ -169,6 +184,7 @@ export class PostResolver {
     return {
       posts: posts.slice(0, realLimit),
       hasMore: posts.length === reaLimitPlusOne,
+      offset: offset || 0,
     };
   }
 

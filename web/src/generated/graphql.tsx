@@ -82,6 +82,7 @@ export type PaginatedPosts = {
   __typename?: 'PaginatedPosts';
   posts: Array<Post>;
   hasMore: Scalars['Boolean'];
+  offset: Scalars['Float'];
 };
 
 export type Post = {
@@ -114,7 +115,9 @@ export type Query = {
 
 
 export type QueryPostsArgs = {
+  offset?: Maybe<Scalars['Int']>;
   cursor?: Maybe<Scalars['String']>;
+  sort: Scalars['String'];
   limit: Scalars['Int'];
 };
 
@@ -313,6 +316,8 @@ export type PostQuery = (
 export type PostsQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: Maybe<Scalars['String']>;
+  sort: Scalars['String'];
+  offset?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -320,7 +325,7 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: (
     { __typename?: 'PaginatedPosts' }
-    & Pick<PaginatedPosts, 'hasMore'>
+    & Pick<PaginatedPosts, 'hasMore' | 'offset'>
     & { posts: Array<(
       { __typename?: 'Post' }
       & PostSnippetFragment
@@ -745,9 +750,10 @@ export type PostQueryHookResult = ReturnType<typeof usePostQuery>;
 export type PostLazyQueryHookResult = ReturnType<typeof usePostLazyQuery>;
 export type PostQueryResult = Apollo.QueryResult<PostQuery, PostQueryVariables>;
 export const PostsDocument = gql`
-    query Posts($limit: Int!, $cursor: String) {
-  posts(limit: $limit, cursor: $cursor) {
+    query Posts($limit: Int!, $cursor: String, $sort: String!, $offset: Int) {
+  posts(limit: $limit, cursor: $cursor, sort: $sort, offset: $offset) {
     hasMore
+    offset
     posts {
       ...PostSnippet
     }
@@ -769,6 +775,8 @@ export const PostsDocument = gql`
  *   variables: {
  *      limit: // value for 'limit'
  *      cursor: // value for 'cursor'
+ *      sort: // value for 'sort'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
