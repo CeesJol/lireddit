@@ -18,6 +18,8 @@ export type Comment = {
   __typename?: 'Comment';
   id: Scalars['Float'];
   text: Scalars['String'];
+  creatorId: Scalars['Float'];
+  creator: User;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -337,6 +339,10 @@ export type GetCommentsQuery = (
   & { comments: Array<(
     { __typename?: 'Comment' }
     & Pick<Comment, 'id' | 'text'>
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ) }
   )> }
 );
 
@@ -794,6 +800,10 @@ export const GetCommentsDocument = gql`
   comments {
     id
     text
+    creator {
+      id
+      username
+    }
   }
 }
     `;

@@ -1,4 +1,4 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
+import { Box, Button, Heading, Link } from "@chakra-ui/react";
 import { withApollo } from "../../util/withApollo";
 import { withUrqlClient } from "next-urql";
 import React from "react";
@@ -8,7 +8,9 @@ import { createUrqlClient } from "../../util/createUrqlClient";
 import { useGetPostFromUrl } from "../../util/useGetPostFromUrl";
 import {
   useCreateCommentMutation,
+  useDeleteCommentMutation,
   useGetCommentsQuery,
+  useMeQuery,
 } from "../../generated/graphql";
 import { Form, Formik } from "formik";
 import { InputField } from "../../components/InputField";
@@ -18,6 +20,8 @@ export const Post = ({}) => {
   const router = useRouter();
   const [createComment] = useCreateCommentMutation();
   const { data, error, loading } = useGetPostFromUrl();
+  const { data: meData } = useMeQuery();
+  const [deleteComment] = useDeleteCommentMutation();
   const {
     data: data2,
     error: error2,
@@ -99,8 +103,22 @@ export const Post = ({}) => {
       {data2 &&
         !loading2 &&
         data2.comments.map((c) => (
-          <Box>
-            <b>Anonymous:</b>
+          <Box mb={4}>
+            <b>{c.creator.username || "Anonymous"} </b>
+            {meData?.me?.id === c.creator.id && (
+              <Link
+                onClick={() => {
+                  deleteComment({
+                    variables: { id: c.id },
+                    update: (cache) => {
+                      cache.evict({ id: "Comment:" + c.id });
+                    },
+                  });
+                }}
+              >
+                delete
+              </Link>
+            )}
             <p>{c.text}</p>
           </Box>
         ))}
