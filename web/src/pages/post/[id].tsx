@@ -15,6 +15,7 @@ import {
 import { Form, Formik } from "formik";
 import { InputField } from "../../components/InputField";
 import { useRouter } from "next/router";
+import { CommentComponent } from "../../components/CommentComponent";
 
 export const Post = ({}) => {
   const router = useRouter();
@@ -23,7 +24,6 @@ export const Post = ({}) => {
   const [createComment] = useCreateCommentMutation();
   const { data, error, loading } = useGetPostFromUrl();
   const { data: meData } = useMeQuery();
-  const [deleteComment] = useDeleteCommentMutation();
   const {
     data: data2,
     error: error2,
@@ -112,24 +112,7 @@ export const Post = ({}) => {
       {data2 &&
         !loading2 &&
         data2.comments.map((c) => (
-          <Box mb={4} key={c.id}>
-            <b>{c.creator.username || "Anonymous"} </b>
-            {meData?.me?.id === c.creator.id && (
-              <Link
-                onClick={() => {
-                  deleteComment({
-                    variables: { id: c.id },
-                    update: (cache) => {
-                      cache.evict({ id: "Comment:" + c.id });
-                    },
-                  });
-                }}
-              >
-                delete
-              </Link>
-            )}
-            <p>{c.text}</p>
-          </Box>
+          <CommentComponent key={c.id} c={c} meId={meData?.me?.id} />
         ))}
     </Layout>
   );
