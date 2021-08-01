@@ -49,7 +49,9 @@ export class Comment extends BaseEntity {
   creatorId: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, {
+    onDelete: "CASCADE",
+  })
   creator: User;
 
   // ----- RELATION TO POST -----
@@ -58,7 +60,9 @@ export class Comment extends BaseEntity {
   relatedPostId: number;
 
   @Field(() => Post)
-  @ManyToOne(() => Post, (post) => post.comments)
+  @ManyToOne(() => Post, (post) => post.comments, {
+    onDelete: "CASCADE",
+  })
   relatedPost: Post;
 
   // ----- MISC -----

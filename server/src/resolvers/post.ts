@@ -188,6 +188,23 @@ export class PostResolver {
     };
   }
 
+  @Query(() => [Post])
+  async postsFromUser(
+    @Arg("userId", () => Int) userId: number
+  ): Promise<Post[]> {
+    const replacements: any[] = [userId];
+
+    const query = `
+        select p.*
+        from post p
+        where p."creatorId" = $1
+      `;
+
+    const posts = await getConnection().query(query, replacements);
+
+    return posts;
+  }
+
   @Query(() => Post, { nullable: true })
   post(@Arg("id", () => Int) id: number): Promise<Post | undefined> {
     return Post.findOne(id);

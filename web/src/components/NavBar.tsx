@@ -38,7 +38,12 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             create post
           </Button>
         </NextLink>
-        <Box mr={2}>{data.me.username}</Box>
+        <NextLink href="/user/[id]" as={`/user/${data.me.id}`}>
+          <Link>
+            <Box mr={2}>{data.me.username}</Box>
+          </Link>
+        </NextLink>
+
         <Button
           onClick={async () => {
             await logout();
