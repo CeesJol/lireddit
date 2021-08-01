@@ -32,7 +32,7 @@ export const CreatePost: React.FC<{}> = ({}) => {
           }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, values }) => (
           <Form>
             <Box mt={4}>
               <InputField name="title" placeholder="title" label="Title" />
@@ -50,6 +50,7 @@ export const CreatePost: React.FC<{}> = ({}) => {
               type="submit"
               colorScheme="teal"
               isLoading={isSubmitting}
+              disabled={values.title.length === 0 || values.text.length === 0}
             >
               Create post
             </Button>

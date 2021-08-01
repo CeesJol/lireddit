@@ -48,7 +48,7 @@ export const EditPost = ({}) => {
           router.back();
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, values }) => (
           <Form>
             <Box mt={4}>
               <InputField name="title" placeholder="title" label="Title" />
@@ -66,6 +66,7 @@ export const EditPost = ({}) => {
               type="submit"
               colorScheme="teal"
               isLoading={isSubmitting}
+              disabled={values.title.length === 0 || values.text.length === 0}
             >
               update post
             </Button>

@@ -16,6 +16,7 @@ import { Form, Formik } from "formik";
 import { InputField } from "../../components/InputField";
 import { useRouter } from "next/router";
 import { CommentComponent } from "../../components/CommentComponent";
+import NextLink from "next/link";
 
 export const Post = ({}) => {
   const router = useRouter();
@@ -64,48 +65,62 @@ export const Post = ({}) => {
       />
       <br />
       <Heading size="md" mb={4}>
-        Comments
+        Comments {data2?.comments ? `(${data2.comments.length})` : ""}
       </Heading>
+
+      {!meData?.me ? (
+        <Box mb={4}>
+          <NextLink href="/login">
+            <Link>Log in</Link>
+          </NextLink>{" "}
+          or{" "}
+          <NextLink href="/register">
+            <Link>register</Link>
+          </NextLink>{" "}
+          to place a comment
+        </Box>
+      ) : (
+        <Formik
+          initialValues={{ text: "" }}
+          onSubmit={async (values) => {
+            await createComment({
+              variables: {
+                text: values.text,
+                relatedPostId: parseInt(id as string) as number,
+              },
+              update: (cache) => {
+                cache.evict({ fieldName: "comments" });
+                router.reload();
+              },
+            });
+          }}
+        >
+          {({ isSubmitting, values }) => (
+            <Form>
+              <Box mt={4}>
+                <InputField textarea name="text" placeholder="text..." />
+              </Box>
+              <Button
+                mt={4}
+                mb={4}
+                type="submit"
+                colorScheme="teal"
+                isLoading={isSubmitting}
+                disabled={values.text.length === 0}
+              >
+                Comment
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      )}
+
       {error2 && (
         <>
           <div>Could not load comments</div>
           <div>{error2.message}</div>
         </>
       )}
-
-      <Formik
-        initialValues={{ text: "" }}
-        onSubmit={async (values) => {
-          await createComment({
-            variables: {
-              text: values.text,
-              relatedPostId: parseInt(id as string) as number,
-            },
-            update: (cache) => {
-              cache.evict({ fieldName: "comments" });
-              router.reload();
-            },
-          });
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <Box mt={4}>
-              <InputField textarea name="text" placeholder="text..." />
-            </Box>
-            <Button
-              mt={4}
-              mb={4}
-              type="submit"
-              colorScheme="teal"
-              isLoading={isSubmitting}
-            >
-              Comment
-            </Button>
-          </Form>
-        )}
-      </Formik>
-
       {data2 && !loading2 && data2.comments.length === 0 && (
         <Box>There are no comments yet</Box>
       )}
