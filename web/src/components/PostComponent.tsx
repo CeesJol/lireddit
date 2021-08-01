@@ -11,7 +11,7 @@ interface PostComponentProps {
 
 export const PostComponent: React.FC<PostComponentProps> = ({ p }) => {
   return (
-    <Flex key={p.id} p={5} shadow="md" borderWidth="1px">
+    <Flex p={5} shadow="md" borderWidth="1px">
       <UpdootSection post={p} />
       <Box flex={1}>
         <NextLink href="/post/[id]" as={`/post/${p.id}`}>

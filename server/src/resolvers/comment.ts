@@ -26,25 +26,29 @@ export class CommentResolver {
   @UseMiddleware(isAuth)
   async createComment(
     @Arg("text") text: string,
+    @Arg("relatedPostId") relatedPostId: number,
     @Ctx() { req }: MyContext
   ): Promise<Comment> {
     return Comment.create({
       text: text,
+      relatedPostId: relatedPostId,
       creatorId: req.session.userId,
     }).save();
   }
 
   @Query(() => [Comment])
-  async comments(): Promise<Comment[]> {
-    // return Comment.find();
-    const result = (await getConnection()
-      .createQueryBuilder()
-      .select("*")
-      .from("comment", "c")
-      .orderBy(`"createdAt"`, "DESC")
-      .execute()) as any;
-    console.log("result:", result);
-    return result;
+  async comments(
+    @Arg("relatedPostId") relatedPostId: number
+  ): Promise<Comment[]> {
+    const replacements: number[] = [relatedPostId];
+    const query = `
+        select c.*
+        from comment c
+        where c."relatedPostId" = $1
+        order by c."createdAt" DESC
+      `;
+    const comments = await getConnection().query(query, replacements);
+    return comments;
   }
 
   @Mutation(() => Boolean)

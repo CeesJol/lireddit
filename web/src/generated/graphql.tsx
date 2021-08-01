@@ -20,6 +20,8 @@ export type Comment = {
   text: Scalars['String'];
   creatorId: Scalars['Float'];
   creator: User;
+  relatedPostId: Scalars['Float'];
+  relatedPost: Post;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -92,6 +94,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationCreateCommentArgs = {
+  relatedPostId: Scalars['Float'];
   text: Scalars['String'];
 };
 
@@ -147,6 +150,11 @@ export type QueryPostsArgs = {
 
 export type QueryPostArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryCommentsArgs = {
+  relatedPostId: Scalars['Float'];
 };
 
 export type User = {
@@ -216,6 +224,7 @@ export type ChangePasswordMutation = (
 
 export type CreateCommentMutationVariables = Exact<{
   text: Scalars['String'];
+  relatedPostId: Scalars['Float'];
 }>;
 
 
@@ -223,7 +232,7 @@ export type CreateCommentMutation = (
   { __typename?: 'Mutation' }
   & { createComment: (
     { __typename?: 'Comment' }
-    & Pick<Comment, 'text'>
+    & Pick<Comment, 'text' | 'relatedPostId'>
   ) }
 );
 
@@ -331,14 +340,16 @@ export type VoteMutation = (
   & Pick<Mutation, 'vote'>
 );
 
-export type GetCommentsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCommentsQueryVariables = Exact<{
+  relatedPostId: Scalars['Float'];
+}>;
 
 
 export type GetCommentsQuery = (
   { __typename?: 'Query' }
   & { comments: Array<(
     { __typename?: 'Comment' }
-    & Pick<Comment, 'id' | 'text'>
+    & Pick<Comment, 'id' | 'text' | 'relatedPostId'>
     & { creator: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username'>
@@ -467,9 +478,10 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const CreateCommentDocument = gql`
-    mutation CreateComment($text: String!) {
-  createComment(text: $text) {
+    mutation CreateComment($text: String!, $relatedPostId: Float!) {
+  createComment(text: $text, relatedPostId: $relatedPostId) {
     text
+    relatedPostId
   }
 }
     `;
@@ -489,6 +501,7 @@ export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutat
  * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
  *   variables: {
  *      text: // value for 'text'
+ *      relatedPostId: // value for 'relatedPostId'
  *   },
  * });
  */
@@ -796,10 +809,11 @@ export type VoteMutationHookResult = ReturnType<typeof useVoteMutation>;
 export type VoteMutationResult = Apollo.MutationResult<VoteMutation>;
 export type VoteMutationOptions = Apollo.BaseMutationOptions<VoteMutation, VoteMutationVariables>;
 export const GetCommentsDocument = gql`
-    query GetComments {
-  comments {
+    query GetComments($relatedPostId: Float!) {
+  comments(relatedPostId: $relatedPostId) {
     id
     text
+    relatedPostId
     creator {
       id
       username
@@ -820,10 +834,11 @@ export const GetCommentsDocument = gql`
  * @example
  * const { data, loading, error } = useGetCommentsQuery({
  *   variables: {
+ *      relatedPostId: // value for 'relatedPostId'
  *   },
  * });
  */
-export function useGetCommentsQuery(baseOptions?: Apollo.QueryHookOptions<GetCommentsQuery, GetCommentsQueryVariables>) {
+export function useGetCommentsQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsQuery, GetCommentsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetCommentsQuery, GetCommentsQueryVariables>(GetCommentsDocument, options);
       }

@@ -18,6 +18,8 @@ import { useRouter } from "next/router";
 
 export const Post = ({}) => {
   const router = useRouter();
+  const { id } = router.query;
+
   const [createComment] = useCreateCommentMutation();
   const { data, error, loading } = useGetPostFromUrl();
   const { data: meData } = useMeQuery();
@@ -26,7 +28,11 @@ export const Post = ({}) => {
     data: data2,
     error: error2,
     loading: loading2,
-  } = useGetCommentsQuery();
+  } = useGetCommentsQuery({
+    variables: {
+      relatedPostId: parseInt(id as string) as never,
+    },
+  });
 
   if (loading) {
     return (
@@ -71,7 +77,10 @@ export const Post = ({}) => {
         initialValues={{ text: "" }}
         onSubmit={async (values) => {
           await createComment({
-            variables: { text: values.text },
+            variables: {
+              text: values.text,
+              relatedPostId: parseInt(id as string) as number,
+            },
             update: (cache) => {
               cache.evict({ fieldName: "comments" });
               router.reload();
@@ -103,7 +112,7 @@ export const Post = ({}) => {
       {data2 &&
         !loading2 &&
         data2.comments.map((c) => (
-          <Box mb={4}>
+          <Box mb={4} key={c.id}>
             <b>{c.creator.username || "Anonymous"} </b>
             {meData?.me?.id === c.creator.id && (
               <Link

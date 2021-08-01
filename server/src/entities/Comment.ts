@@ -8,11 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Post } from "./Post";
 import { User } from "./User";
 
 @ObjectType()
 @Entity()
 export class Comment extends BaseEntity {
+  // ----- OWN PROPERTIES -----
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
@@ -41,6 +43,7 @@ export class Comment extends BaseEntity {
   // @OneToMany(() => Updoot, (updoot) => updoot.comment)
   // updoots: Updoot[];
 
+  // ----- RELATION TO USER -----
   @Field()
   @Column()
   creatorId: number;
@@ -49,6 +52,16 @@ export class Comment extends BaseEntity {
   @ManyToOne(() => User, (user) => user.posts)
   creator: User;
 
+  // ----- RELATION TO POST -----
+  @Field()
+  @Column()
+  relatedPostId: number;
+
+  @Field(() => Post)
+  @ManyToOne(() => Post, (post) => post.comments)
+  relatedPost: Post;
+
+  // ----- MISC -----
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;

@@ -1,7 +1,8 @@
-query GetComments {
-  comments {
+query GetComments($relatedPostId: Float!) {
+  comments(relatedPostId: $relatedPostId) {
     id
     text
+    relatedPostId
     creator {
       id
       username

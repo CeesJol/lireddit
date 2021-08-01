@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "gen-env": "npx gen-env-types .env -o src/env.d.ts -e .",
+    "create:migration": "npx typeorm migration:create -n New --dir src/migrations",
+    "generate:migration": "npx typeorm migration:generate -n New --dir src/migrations",
     "build": "tsc",
     "watch": "tsc -w",
     "dev": "nodemon --es-module-specifier-resolution=node dist/index.js",

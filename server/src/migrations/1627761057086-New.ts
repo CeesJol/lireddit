@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class New1627752168671 implements MigrationInterface {
-  name = "New1627752168671";
-
+export class New1627761057086 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DELETE FROM post`);
 
@@ -14,8 +12,5 @@ export class New1627752168671 implements MigrationInterface {
     );
   }
 
-  public async down(_: QueryRunner): Promise<void> {
-    // await queryRunner.query(`ALTER TABLE "comment" DROP CONSTRAINT "FK_b6bf60ecb9f6c398e349adff52f"`);
-    // await queryRunner.query(`ALTER TABLE "comment" DROP COLUMN "creatorId"`);
-  }
+  public async down(_: QueryRunner): Promise<void> {}
 }

@@ -2,7 +2,7 @@
 
 echo What should the version be?
 read VERSION
-echo $VERSION
+echo "Fine, deploying" $VERSION
 
 docker build -t dockerwokker/lireddit:$VERSION .
 docker push dockerwokker/lireddit:$VERSION

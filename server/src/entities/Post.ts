@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { Updoot } from "./Updoot";
 import { User } from "./User";
+import { Comment } from "./Comment";
 
 @ObjectType()
 @Entity()
@@ -51,6 +52,11 @@ export class Post extends BaseEntity {
   // comments: Comment[];
   // ---
 
+  // ---- RELATION TO COMMENT -----
+  @OneToMany(() => Comment, (comment) => comment.relatedPost)
+  comments: Comment[];
+
+  // ---- MISC -----
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;
