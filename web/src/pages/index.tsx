@@ -33,6 +33,7 @@ const Index = () => {
         w={100}
         onChange={(event) => changeSort(event)}
         value="new"
+        mb={4}
       >
         <option value="new">New</option>
         <option value="top">Top</option>

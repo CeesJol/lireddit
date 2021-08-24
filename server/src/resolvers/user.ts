@@ -146,6 +146,16 @@ export class UserResolver {
     return User.findOne(req.session.userId);
   }
 
+  @Query(() => User, { nullable: true })
+  userById(@Arg("userId") userId: number) {
+    // you are not logged in
+    if (!userId) {
+      return null;
+    }
+
+    return User.findOne(userId);
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,

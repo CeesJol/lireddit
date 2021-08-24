@@ -195,10 +195,10 @@ export class PostResolver {
     const replacements: any[] = [userId];
 
     const query = `
-        select p.*
-        from post p
-        where p."creatorId" = $1
-      `;
+      select p.*
+      from post p
+      where p."creatorId" = $1
+    `;
 
     const posts = await getConnection().query(query, replacements);
 
