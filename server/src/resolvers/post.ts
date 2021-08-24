@@ -135,9 +135,9 @@ export class PostResolver {
   ): Promise<PaginatedPosts> {
     // 20 -> 21
     const realLimit = Math.min(50, limit);
-    const reaLimitPlusOne = realLimit + 1;
+    const realLimitPlusOne = realLimit + 1;
 
-    const replacements: any[] = [reaLimitPlusOne];
+    const replacements: any[] = [realLimitPlusOne];
 
     if (sort === "top") {
       replacements.push(offset);
@@ -170,7 +170,7 @@ export class PostResolver {
     //   .createQueryBuilder("p")
     //   .innerJoinAndSelect("p.creator", "u", 'u.id = p."creatorId"')
     //   .orderBy('p."createdAt"', "DESC")
-    //   .take(reaLimitPlusOne);
+    //   .take(realLimitPlusOne);
 
     // if (cursor) {
     //   qb.where('p."createdAt" < :cursor', {
@@ -183,7 +183,7 @@ export class PostResolver {
 
     return {
       posts: posts.slice(0, realLimit),
-      hasMore: posts.length === reaLimitPlusOne,
+      hasMore: posts.length === realLimitPlusOne,
       offset: offset || 0,
     };
   }
