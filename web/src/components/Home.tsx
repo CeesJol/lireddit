@@ -1,11 +1,20 @@
-import { Box, Button, Flex, Link, Select, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Link,
+  Select,
+  Stack,
+} from "@chakra-ui/react";
 import React from "react";
 import { Layout } from "../components/Layout";
 import PostComponent from "../components/PostComponent";
-import { usePostsQuery } from "../generated/graphql";
+import { useMeQuery, usePostsQuery } from "../generated/graphql";
 import { changeSort } from "../util/changeSort";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { isServer } from "../util/isServer";
 
 interface HomeProps {
   sort: "top" | "new";
@@ -40,51 +49,52 @@ const Home: React.FC<HomeProps> = ({ sort }) => {
     notifyOnNetworkStatusChange: true,
   });
 
-  if (!loading && !data) {
-    return (
-      <div>
-        <div>you got query failed for some reason</div>
-        <div>{error?.message}</div>
-      </div>
-    );
-  }
+  const { data: meData } = useMeQuery({ skip: isServer() });
 
   return (
     <Layout>
-      {/* <NextLink href={`${router.asPath}/create-post`}>
-        <Button as={Link} mr={4}>
-          create post
-        </Button>
-      </NextLink> */}
-      {subredditTitle && (
-        <NextLink
-          href="/r/[title]/create-post"
-          as={`/r/${subredditTitle}/create-post`}
-        >
-          <Button as={Link} mr={4}>
-            create post
-          </Button>
-        </NextLink>
-      )}
-      <Box>
-        Sort by:
-        <Select
-          placeholder="Select option"
-          w={100}
-          onChange={(event) => changeSort(event, subredditTitle)}
-          value={sort}
-          mb={4}
-        >
-          <option value="new">New</option>
-          <option value="top">Top</option>
-        </Select>
+      <Box mb={4}>
+        <Heading>
+          <b>{subredditTitle ? `r/${subredditTitle}` : "Posts"}</b>
+        </Heading>
       </Box>
+      {data && (
+        <Flex align="center" mb={4}>
+          <Box mr={4}>Sort by:</Box>
+          <Box>
+            <Select
+              placeholder="Select option"
+              w={100}
+              onChange={(event) => changeSort(event, subredditTitle)}
+              value={sort}
+              mr={4}
+            >
+              <option value="new">New</option>
+              <option value="top">Top</option>
+            </Select>
+          </Box>
+          {subredditTitle && meData?.me?.id && (
+            <NextLink
+              href="/r/[title]/create-post"
+              as={`/r/${subredditTitle}/create-post`}
+            >
+              <Button as={Link}>create post</Button>
+            </NextLink>
+          )}
+        </Flex>
+      )}
       {!data && loading ? (
         <div>loading...</div>
+      ) : !loading && !data ? (
+        <div>
+          <div>{error?.message}</div>
+        </div>
       ) : (
         <Stack spacing={8}>
           {data!.posts.posts.map((p) =>
-            !p ? null : <PostComponent p={p} key={p.id} />
+            !p ? null : (
+              <PostComponent p={p} subredditTitle={subredditTitle} key={p.id} />
+            )
           )}
         </Stack>
       )}

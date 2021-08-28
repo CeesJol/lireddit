@@ -137,6 +137,19 @@ export class PostResolver {
     @Arg("subredditTitle", () => String, { nullable: true })
     subredditTitle: string | null
   ): Promise<PaginatedPosts> {
+    // 1. If a subreddit is provided, check if it exists
+    if (subredditTitle) {
+      let q = `
+        select 1 from subreddit where subreddit.title = $1
+      `;
+      const subredditExists = await getConnection().query(q, [subredditTitle]);
+      console.log("subredditExists:", subredditExists);
+      if (subredditExists.length === 0) {
+        throw new Error(`The subreddit r/${subredditTitle} does not exist.`);
+      }
+    }
+
+    // 2. Write the monster query and return
     // 20 -> 21
     const realLimit = Math.min(50, limit);
     const realLimitPlusOne = realLimit + 1;
@@ -148,10 +161,6 @@ export class PostResolver {
     } else if (cursor) {
       replacements.push(new Date(parseInt(cursor!)));
     }
-
-    // if (subredditTitle) {
-    //   replacements.push(subredditTitle);
-    // }
 
     let query = `
       select p.*
@@ -173,6 +182,13 @@ export class PostResolver {
     }
     const posts = await getConnection().query(query, replacements);
 
+    return {
+      posts: posts.slice(0, realLimit),
+      hasMore: posts.length === realLimitPlusOne,
+      offset: offset || 0,
+    };
+
+    // 3. Old stuff
     // const qb = getConnection()
     //   .getRepository(Post)
     //   .createQueryBuilder("p")
@@ -188,12 +204,6 @@ export class PostResolver {
 
     // const posts = await qb.getMany();
     // console.log("posts: ", posts);
-
-    return {
-      posts: posts.slice(0, realLimit),
-      hasMore: posts.length === realLimitPlusOne,
-      offset: offset || 0,
-    };
   }
 
   @Query(() => [Post])

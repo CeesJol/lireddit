@@ -28,7 +28,6 @@ export const User = ({}) => {
   if (!loading && !data) {
     return (
       <div>
-        <div>you got query failed for some reason</div>
         <div>{error?.message}</div>
       </div>
     );

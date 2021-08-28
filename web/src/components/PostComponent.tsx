@@ -7,9 +7,13 @@ import NextLink from "next/link";
 
 interface PostComponentProps {
   p: PostSnippetFragment;
+  subredditTitle?: string | undefined;
 }
 
-export const PostComponent: React.FC<PostComponentProps> = ({ p }) => {
+export const PostComponent: React.FC<PostComponentProps> = ({
+  p,
+  subredditTitle,
+}) => {
   return (
     <Flex p={5} shadow="md" borderWidth="1px">
       <UpdootSection post={p} />
@@ -19,7 +23,21 @@ export const PostComponent: React.FC<PostComponentProps> = ({ p }) => {
             <Heading fontSize="xl">{p.title}</Heading>
           </Link>
         </NextLink>
-        <Text>posted by {p.creator.username}</Text>
+        <Text>
+          posted by{" "}
+          <NextLink href="/user/[id]" as={`/user/${p.creator.id}`}>
+            <Link>{p.creator.username}</Link>
+          </NextLink>
+          {!subredditTitle && (
+            <>
+              {" "}
+              in{" "}
+              <NextLink href="/r/[title]" as={`/r/${p.subredditTitle}`}>
+                <Link>{`r/${p.subredditTitle}`}</Link>
+              </NextLink>
+            </>
+          )}
+        </Text>
         <Flex align="center">
           <Text flex={1} mt={4}>
             {p.textSnippet}
