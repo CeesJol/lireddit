@@ -1,9 +1,11 @@
-import { Button, Flex, Select, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, Select, Stack } from "@chakra-ui/react";
 import React from "react";
 import { Layout } from "../components/Layout";
 import PostComponent from "../components/PostComponent";
 import { usePostsQuery } from "../generated/graphql";
 import { changeSort } from "../util/changeSort";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
 interface HomeProps {
   sort: "top" | "new";
@@ -19,12 +21,15 @@ interface VariablesOptions {
   subredditTitle?: string;
 }
 
-const Home: React.FC<HomeProps> = ({ sort, subredditTitle }) => {
+const Home: React.FC<HomeProps> = ({ sort }) => {
+  const router = useRouter();
+  const subredditTitle: string | undefined = router.query.title as never;
+
   let variablesOptions: VariablesOptions = {};
-  console.log("subredditTitle:", subredditTitle);
   if (subredditTitle) {
     variablesOptions["subredditTitle"] = subredditTitle;
   }
+
   let { data, error, loading, fetchMore, variables } = usePostsQuery({
     variables: {
       limit: 15,
@@ -46,17 +51,34 @@ const Home: React.FC<HomeProps> = ({ sort, subredditTitle }) => {
 
   return (
     <Layout>
-      Sort by:
-      <Select
-        placeholder="Select option"
-        w={100}
-        onChange={(event) => changeSort(event)}
-        value={sort}
-        mb={4}
-      >
-        <option value="new">New</option>
-        <option value="top">Top</option>
-      </Select>
+      {/* <NextLink href={`${router.asPath}/create-post`}>
+        <Button as={Link} mr={4}>
+          create post
+        </Button>
+      </NextLink> */}
+      {subredditTitle && (
+        <NextLink
+          href="/r/[title]/create-post"
+          as={`/r/${subredditTitle}/create-post`}
+        >
+          <Button as={Link} mr={4}>
+            create post
+          </Button>
+        </NextLink>
+      )}
+      <Box>
+        Sort by:
+        <Select
+          placeholder="Select option"
+          w={100}
+          onChange={(event) => changeSort(event, subredditTitle)}
+          value={sort}
+          mb={4}
+        >
+          <option value="new">New</option>
+          <option value="top">Top</option>
+        </Select>
+      </Box>
       {!data && loading ? (
         <div>loading...</div>
       ) : (

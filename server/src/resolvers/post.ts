@@ -146,11 +146,9 @@ export class PostResolver {
     if (sort === "top") {
       replacements.push(offset);
     } else if (cursor) {
-      console.log("cursor:", cursor);
       replacements.push(new Date(parseInt(cursor!)));
     }
 
-    console.log("subredditTitle:", subredditTitle);
     // if (subredditTitle) {
     //   replacements.push(subredditTitle);
     // }

@@ -3,13 +3,11 @@ import React from "react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../util/isServer";
-import { useRouter } from "next/router";
 import { useApolloClient } from "@apollo/client";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const router = useRouter();
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
   const apolloClient = useApolloClient();
   const { data, loading } = useMeQuery({ skip: isServer() });
@@ -33,11 +31,6 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     // you are logged in
     body = (
       <Flex align="center">
-        <NextLink href="/create-post">
-          <Button as={Link} mr={4}>
-            create post
-          </Button>
-        </NextLink>
         <NextLink href="/user/[id]" as={`/user/${data.me.id}`}>
           <Link>
             <Box mr={2}>{data.me.username}</Box>

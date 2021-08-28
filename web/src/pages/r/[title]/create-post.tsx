@@ -1,25 +1,22 @@
 import { Box, Button } from "@chakra-ui/react";
-import { error } from "console";
-import { Form, Formik } from "formik";
-import { withApollo } from "../util/withApollo";
-import { withUrqlClient } from "next-urql";
+import { Formik, Form } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
-import { InputField } from "../components/InputField";
-import Layout from "../components/Layout";
-import { useCreatePostMutation } from "../generated/graphql";
-import { createUrqlClient } from "../util/createUrqlClient";
-import { useIsAuth } from "../util/useIsAuth";
+import { InputField } from "../../../components/InputField";
+import { useCreatePostMutation } from "../../../generated/graphql";
+import { useIsAuth } from "../../../util/useIsAuth";
+import { withApollo } from "../../../util/withApollo";
+import Layout from "../../../components/Layout";
 
 export const CreatePost: React.FC<{}> = ({}) => {
   const router = useRouter();
+  const title: string | undefined = router.query.title as never;
   useIsAuth();
   const [createPost] = useCreatePostMutation();
   return (
     <Layout variant="small">
       <Formik
-        // TODO: subredditTitle
-        initialValues={{ title: "", text: "", subredditTitle: "cats" }}
+        initialValues={{ title: "", text: "", subredditTitle: title }}
         onSubmit={async (values) => {
           const { errors } = await createPost({
             variables: { input: values },
