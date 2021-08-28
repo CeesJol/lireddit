@@ -12,6 +12,7 @@ import {
 } from "../../../generated/graphql";
 import { createUrqlClient } from "../../../util/createUrqlClient";
 import { useGetIntId } from "../../../util/useGetIntId";
+import { Wrapper } from "../../../components/Wrapper";
 
 export const EditPost = ({}) => {
   const router = useRouter();
@@ -26,7 +27,9 @@ export const EditPost = ({}) => {
   if (loading) {
     return (
       <Layout>
-        <div>loading...</div>
+        <Wrapper>
+          <div>loading...</div>
+        </Wrapper>
       </Layout>
     );
   }
@@ -34,45 +37,49 @@ export const EditPost = ({}) => {
   if (!data?.post) {
     return (
       <Layout>
-        <Box>could not find post</Box>
+        <Wrapper>
+          <Box>could not find post</Box>
+        </Wrapper>
       </Layout>
     );
   }
 
   return (
-    <Layout variant="small">
-      <Formik
-        initialValues={{ title: data.post.title, text: data.post.text }}
-        onSubmit={async (values) => {
-          await updatePost({ variables: { id: intId, ...values } });
-          router.back();
-        }}
-      >
-        {({ isSubmitting, values }) => (
-          <Form>
-            <Box mt={4}>
-              <InputField name="title" placeholder="title" label="Title" />
-            </Box>
-            <Box mt={4}>
-              <InputField
-                textarea
-                name="text"
-                placeholder="text..."
-                label="Body"
-              />
-            </Box>
-            <Button
-              mt={4}
-              type="submit"
-              colorScheme="teal"
-              isLoading={isSubmitting}
-              disabled={values.title.length === 0 || values.text.length === 0}
-            >
-              update post
-            </Button>
-          </Form>
-        )}
-      </Formik>
+    <Layout>
+      <Wrapper variant="small">
+        <Formik
+          initialValues={{ title: data.post.title, text: data.post.text }}
+          onSubmit={async (values) => {
+            await updatePost({ variables: { id: intId, ...values } });
+            router.back();
+          }}
+        >
+          {({ isSubmitting, values }) => (
+            <Form>
+              <Box mt={4}>
+                <InputField name="title" placeholder="title" label="Title" />
+              </Box>
+              <Box mt={4}>
+                <InputField
+                  textarea
+                  name="text"
+                  placeholder="text..."
+                  label="Body"
+                />
+              </Box>
+              <Button
+                mt={4}
+                type="submit"
+                colorScheme="teal"
+                isLoading={isSubmitting}
+                disabled={values.title.length === 0 || values.text.length === 0}
+              >
+                update post
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Wrapper>
     </Layout>
   );
 };

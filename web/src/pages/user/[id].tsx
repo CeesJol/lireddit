@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import Layout from "../../components/Layout";
 import PostComponent from "../../components/PostComponent";
+import { Wrapper } from "../../components/Wrapper";
 import {
   useUserByIdQuery,
   usePostsFromUserQuery,
@@ -43,26 +44,28 @@ export const User = ({}) => {
 
   return (
     <Layout>
-      <Box mb={4}>
-        <Heading>
-          Posts by <b>{userData?.userById?.username}</b>
-        </Heading>
-      </Box>
-      <Box>
-        {!data && loading ? (
-          <div>loading...</div>
-        ) : (
-          <Stack spacing={8}>
-            {data!.postsFromUser.length === 0 ? (
-              <div>this user has no posts yet</div>
-            ) : (
-              data!.postsFromUser.map((p) =>
-                !p ? null : <PostComponent p={p} key={p.id} />
-              )
-            )}
-          </Stack>
-        )}
-      </Box>
+      <Wrapper>
+        <Box mb={4}>
+          <Heading>
+            Posts by <b>{userData?.userById?.username}</b>
+          </Heading>
+        </Box>
+        <Box>
+          {!data && loading ? (
+            <div>loading...</div>
+          ) : (
+            <Stack spacing={8}>
+              {data!.postsFromUser.length === 0 ? (
+                <div>this user has no posts yet</div>
+              ) : (
+                data!.postsFromUser.map((p) =>
+                  !p ? null : <PostComponent p={p} key={p.id} />
+                )
+              )}
+            </Stack>
+          )}
+        </Box>
+      </Wrapper>
     </Layout>
   );
 };
