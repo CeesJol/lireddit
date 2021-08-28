@@ -7,6 +7,7 @@ query Post($id: Int!) {
     text
     points
     voteStatus
+    subredditTitle
     creator {
       id
       username

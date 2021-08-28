@@ -25,6 +25,8 @@ class PostInput {
   title: string;
   @Field()
   text: string;
+  @Field()
+  subredditTitle: string;
 }
 
 @ObjectType()
@@ -131,7 +133,9 @@ export class PostResolver {
     @Arg("limit", () => Int) limit: number,
     @Arg("sort", () => String) sort: string,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
-    @Arg("offset", () => Int, { nullable: true }) offset: number | null
+    @Arg("offset", () => Int, { nullable: true }) offset: number | null,
+    @Arg("subredditTitle", () => String, { nullable: true })
+    subredditTitle: string | null
   ): Promise<PaginatedPosts> {
     // 20 -> 21
     const realLimit = Math.min(50, limit);
@@ -142,22 +146,28 @@ export class PostResolver {
     if (sort === "top") {
       replacements.push(offset);
     } else if (cursor) {
-      replacements.push(new Date(parseInt(cursor)));
+      console.log("cursor:", cursor);
+      replacements.push(new Date(parseInt(cursor!)));
     }
 
-    let query;
+    console.log("subredditTitle:", subredditTitle);
+    // if (subredditTitle) {
+    //   replacements.push(subredditTitle);
+    // }
+
+    let query = `
+      select p.*
+      from post p
+      ${subredditTitle ? `where p."subredditTitle" = '${subredditTitle}'` : ""}
+    `;
     if (sort === "top") {
-      query = `
-        select p.*
-        from post p
+      query += `
         order by p.points DESC
         offset $2 rows
         fetch next $1 rows only
       `;
     } else {
-      query = `
-        select p.*
-        from post p
+      query += `
         ${cursor ? `where p."createdAt" < $2` : ""}
         order by p."createdAt" DESC
         limit $1

@@ -1,5 +1,17 @@
-query Posts($limit: Int!, $cursor: String, $sort: String!, $offset: Int) {
-  posts(limit: $limit, cursor: $cursor, sort: $sort, offset: $offset) {
+query Posts(
+  $limit: Int!
+  $cursor: String
+  $offset: Int
+  $sort: String!
+  $subredditTitle: String
+) {
+  posts(
+    limit: $limit
+    cursor: $cursor
+    offset: $offset
+    sort: $sort
+    subredditTitle: $subredditTitle
+  ) {
     hasMore
     offset
     posts {

@@ -20,23 +20,19 @@ import { Updoot } from "./entities/Updoot";
 import { createUserLoader } from "./util/createUserLoader";
 import { createUpdootLoader } from "./util/createUpdootLoader";
 import { CommentResolver } from "./resolvers/comment";
+import { Subreddit } from "./entities/Subreddit";
+import { SubredditResolver } from "./resolvers/subreddit";
 
 const main = async () => {
-  // const conn =
   const conn = await createConnection({
     type: "postgres",
-    // database: "lireddit3",
-    // username: "postgres",
-    // password: "postgres",
     url: process.env.DATABASE_URL,
     logging: true,
     // synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User, Updoot, Comment],
+    entities: [Post, User, Updoot, Comment, Subreddit],
   });
   await conn.runMigrations();
-
-  // await Post.delete({});
 
   const app = express();
 
@@ -71,7 +67,13 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver, CommentResolver],
+      resolvers: [
+        HelloResolver,
+        PostResolver,
+        UserResolver,
+        CommentResolver,
+        SubredditResolver,
+      ],
       validate: false,
     }),
     context: ({ req, res }) => ({

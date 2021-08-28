@@ -7,6 +7,7 @@ import { changeSort } from "../util/changeSort";
 
 interface HomeProps {
   sort: "top" | "new";
+  subredditTitle?: string;
 }
 
 interface SortSpecificVariablesOptions {
@@ -14,12 +15,22 @@ interface SortSpecificVariablesOptions {
   cursor?: string;
 }
 
-const Home: React.FC<HomeProps> = ({ sort }) => {
+interface VariablesOptions {
+  subredditTitle?: string;
+}
+
+const Home: React.FC<HomeProps> = ({ sort, subredditTitle }) => {
+  let variablesOptions: VariablesOptions = {};
+  console.log("subredditTitle:", subredditTitle);
+  if (subredditTitle) {
+    variablesOptions["subredditTitle"] = subredditTitle;
+  }
   let { data, error, loading, fetchMore, variables } = usePostsQuery({
     variables: {
       limit: 15,
       sort: sort,
       cursor: null,
+      ...variablesOptions,
     },
     notifyOnNetworkStatusChange: true,
   });
