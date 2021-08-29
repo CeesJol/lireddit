@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../util/isServer";
 import { useApolloClient } from "@apollo/client";
+import { DarkModeSwitch } from "./DarkModeSwitch";
 
 interface NavBarProps {}
 
@@ -25,6 +26,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         <NextLink href="/register">
           <Link>Register</Link>
         </NextLink>
+        <DarkModeSwitch ml={4} />
       </>
     );
   } else {
@@ -47,6 +49,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         >
           Log out
         </Button>
+        <DarkModeSwitch ml={4} />
       </Flex>
     );
   }
