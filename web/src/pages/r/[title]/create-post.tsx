@@ -8,6 +8,7 @@ import { useIsAuth } from "../../../util/useIsAuth";
 import { withApollo } from "../../../util/withApollo";
 import Layout from "../../../components/Layout";
 import { Wrapper } from "../../../components/Wrapper";
+import { PostFormComponent } from "../../../components/PostFormComponent";
 
 export const CreatePost: React.FC<{}> = ({}) => {
   const router = useRouter();
@@ -33,28 +34,11 @@ export const CreatePost: React.FC<{}> = ({}) => {
           }}
         >
           {({ isSubmitting, values }) => (
-            <Form>
-              <Box mt={4}>
-                <InputField name="title" placeholder="title" label="Title" />
-              </Box>
-              <Box mt={4}>
-                <InputField
-                  textarea
-                  name="text"
-                  placeholder="text..."
-                  label="Body"
-                />
-              </Box>
-              <Button
-                mt={4}
-                type="submit"
-                colorScheme="teal"
-                isLoading={isSubmitting}
-                disabled={values.title.length === 0 || values.text.length === 0}
-              >
-                Create post
-              </Button>
-            </Form>
+            <PostFormComponent
+              isSubmitting={isSubmitting}
+              values={values}
+              buttonText="Create post"
+            />
           )}
         </Formik>
       </Wrapper>

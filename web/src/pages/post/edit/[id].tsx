@@ -13,6 +13,7 @@ import {
 import { createUrqlClient } from "../../../util/createUrqlClient";
 import { useGetIntId } from "../../../util/useGetIntId";
 import { Wrapper } from "../../../components/Wrapper";
+import { PostFormComponent } from "../../../components/PostFormComponent";
 
 export const EditPost = ({}) => {
   const router = useRouter();
@@ -48,35 +49,22 @@ export const EditPost = ({}) => {
     <Layout>
       <Wrapper variant="small">
         <Formik
-          initialValues={{ title: data.post.title, text: data.post.text }}
+          initialValues={{
+            title: data.post.title,
+            text: data.post.text,
+            subredditTitle: data.post.subredditTitle,
+          }}
           onSubmit={async (values) => {
             await updatePost({ variables: { id: intId, ...values } });
             router.back();
           }}
         >
           {({ isSubmitting, values }) => (
-            <Form>
-              <Box mt={4}>
-                <InputField name="title" placeholder="title" label="Title" />
-              </Box>
-              <Box mt={4}>
-                <InputField
-                  textarea
-                  name="text"
-                  placeholder="text..."
-                  label="Body"
-                />
-              </Box>
-              <Button
-                mt={4}
-                type="submit"
-                colorScheme="teal"
-                isLoading={isSubmitting}
-                disabled={values.title.length === 0 || values.text.length === 0}
-              >
-                update post
-              </Button>
-            </Form>
+            <PostFormComponent
+              isSubmitting={isSubmitting}
+              values={values}
+              buttonText="Update post"
+            />
           )}
         </Formik>
       </Wrapper>

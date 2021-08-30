@@ -59,7 +59,7 @@ const Home: React.FC<HomeProps> = ({ sort }) => {
       {data && !loading && subredditTitle && (
         <Image
           src={`/subreddit_pic/${subredditTitle}.png`}
-          alt="me"
+          alt={`r/${subredditTitle} header image`}
           width="100%"
           height="180px"
         />
