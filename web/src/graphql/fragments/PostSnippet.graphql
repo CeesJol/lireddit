@@ -3,6 +3,7 @@ fragment PostSnippet on Post {
   createdAt
   updatedAt
   title
+  imgUrl
   textSnippet
   points
   voteStatus

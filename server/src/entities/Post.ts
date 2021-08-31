@@ -25,6 +25,10 @@ export class Post extends BaseEntity {
   @Column()
   title!: string;
 
+  @Field(() => String, { nullable: true })
+  @Column({ type: "text", nullable: true })
+  imgUrl?: string;
+
   @Field()
   @Column()
   text!: string;

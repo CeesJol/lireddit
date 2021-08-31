@@ -61,6 +61,7 @@ export type MutationCreatePostArgs = {
 
 export type MutationUpdatePostArgs = {
   text: Scalars['String'];
+  imgUrl?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   id: Scalars['Int'];
 };
@@ -114,6 +115,7 @@ export type Post = {
   __typename?: 'Post';
   id: Scalars['Float'];
   title: Scalars['String'];
+  imgUrl?: Maybe<Scalars['String']>;
   text: Scalars['String'];
   points: Scalars['Float'];
   voteStatus?: Maybe<Scalars['Int']>;
@@ -128,6 +130,7 @@ export type Post = {
 
 export type PostInput = {
   title: Scalars['String'];
+  imgUrl?: Maybe<Scalars['String']>;
   text: Scalars['String'];
   subredditTitle: Scalars['String'];
 };
@@ -213,7 +216,7 @@ export type CommentSnippetFragment = (
 
 export type PostSnippetFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'textSnippet' | 'points' | 'voteStatus' | 'subredditTitle'>
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'imgUrl' | 'textSnippet' | 'points' | 'voteStatus' | 'subredditTitle'>
   & { creator: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username'>
@@ -350,6 +353,7 @@ export type RegisterMutation = (
 export type UpdatePostMutationVariables = Exact<{
   id: Scalars['Int'];
   title: Scalars['String'];
+  imgUrl?: Maybe<Scalars['String']>;
   text: Scalars['String'];
 }>;
 
@@ -358,7 +362,7 @@ export type UpdatePostMutation = (
   { __typename?: 'Mutation' }
   & { updatePost?: Maybe<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'text' | 'textSnippet'>
+    & Pick<Post, 'id' | 'title' | 'imgUrl' | 'text' | 'textSnippet'>
   )> }
 );
 
@@ -410,7 +414,7 @@ export type PostQuery = (
   { __typename?: 'Query' }
   & { post?: Maybe<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'text' | 'points' | 'voteStatus' | 'subredditTitle'>
+    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'imgUrl' | 'text' | 'points' | 'voteStatus' | 'subredditTitle'>
     & { creator: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username'>
@@ -482,6 +486,7 @@ export const PostSnippetFragmentDoc = gql`
   createdAt
   updatedAt
   title
+  imgUrl
   textSnippet
   points
   voteStatus
@@ -811,10 +816,11 @@ export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const UpdatePostDocument = gql`
-    mutation UpdatePost($id: Int!, $title: String!, $text: String!) {
-  updatePost(id: $id, title: $title, text: $text) {
+    mutation UpdatePost($id: Int!, $title: String!, $imgUrl: String, $text: String!) {
+  updatePost(id: $id, title: $title, imgUrl: $imgUrl, text: $text) {
     id
     title
+    imgUrl
     text
     textSnippet
   }
@@ -837,6 +843,7 @@ export type UpdatePostMutationFn = Apollo.MutationFunction<UpdatePostMutation, U
  *   variables: {
  *      id: // value for 'id'
  *      title: // value for 'title'
+ *      imgUrl: // value for 'imgUrl'
  *      text: // value for 'text'
  *   },
  * });
@@ -962,6 +969,7 @@ export const PostDocument = gql`
     createdAt
     updatedAt
     title
+    imgUrl
     text
     points
     voteStatus

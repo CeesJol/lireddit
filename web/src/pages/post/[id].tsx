@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Link } from "@chakra-ui/react";
+import { Box, Button, Heading, Link, Image } from "@chakra-ui/react";
 import { withApollo } from "../../util/withApollo";
 import { withUrqlClient } from "next-urql";
 import React from "react";
@@ -64,6 +64,7 @@ export const Post = ({}) => {
     <Layout>
       <Wrapper>
         <Heading mb={4}>{data.post.title}</Heading>
+        {data.post.imgUrl && <Image src={data.post.imgUrl} alt="Post image" />}
         <Box mb={4}>{data.post.text}</Box>
         <EditDeletePostButtons
           id={data.post.id}

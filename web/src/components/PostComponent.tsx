@@ -1,4 +1,4 @@
-import { Flex, Box, Link, Heading, Text } from "@chakra-ui/react";
+import { Flex, Box, Link, Heading, Text, Image } from "@chakra-ui/react";
 import React from "react";
 import { PostSnippetFragment } from "../generated/graphql";
 import EditDeletePostButtons from "./EditDeletePostButtons";
@@ -38,14 +38,18 @@ export const PostComponent: React.FC<PostComponentProps> = ({
             </>
           )}
         </Text>
-        <Flex align="center">
-          <Text flex={1} mt={4}>
-            {p.textSnippet}
-          </Text>
-          <Box ml="auto">
-            <EditDeletePostButtons id={p.id} creatorId={p.creator.id} />
-          </Box>
-        </Flex>
+        {p.imgUrl ? (
+          <Image src={p.imgUrl} alt="Post image" mt={4} />
+        ) : (
+          <Flex align="center">
+            <Text flex={1} mt={4}>
+              {p.textSnippet}
+            </Text>
+            <Box ml="auto">
+              <EditDeletePostButtons id={p.id} creatorId={p.creator.id} />
+            </Box>
+          </Flex>
+        )}
       </Box>
     </Flex>
   );

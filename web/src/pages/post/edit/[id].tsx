@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import { withApollo } from "../../../util/withApollo";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import { InputField } from "../../../components/InputField";
 import Layout from "../../../components/Layout";
 import {
@@ -25,6 +25,12 @@ export const EditPost = ({}) => {
     },
   });
   const [updatePost] = useUpdatePostMutation();
+
+  const [url, setUrl] = useState<string>("");
+  const urlCallbackParent = (url: string) => {
+    setUrl(url);
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -51,10 +57,12 @@ export const EditPost = ({}) => {
         <Formik
           initialValues={{
             title: data.post.title,
+            imgUrl: data.post.imgUrl,
             text: data.post.text,
             subredditTitle: data.post.subredditTitle,
           }}
           onSubmit={async (values) => {
+            values["imgUrl"] = url;
             await updatePost({ variables: { id: intId, ...values } });
             router.back();
           }}
@@ -64,6 +72,7 @@ export const EditPost = ({}) => {
               isSubmitting={isSubmitting}
               values={values}
               buttonText="Update post"
+              urlCallbackParent={urlCallbackParent}
             />
           )}
         </Formik>

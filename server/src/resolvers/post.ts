@@ -23,6 +23,8 @@ import { User } from "../entities/User";
 class PostInput {
   @Field()
   title: string;
+  @Field(() => String, { nullable: true })
+  imgUrl?: string;
   @Field()
   text: string;
   @Field()
@@ -245,13 +247,18 @@ export class PostResolver {
   async updatePost(
     @Arg("id", () => Int) id: number,
     @Arg("title") title: string,
+    @Arg("imgUrl", () => String, { nullable: true }) imgUrl: string | null,
     @Arg("text") text: string,
     @Ctx() { req }: MyContext
   ): Promise<Post | null> {
+    let updatedPost: any = { title, text };
+    if (imgUrl) {
+      updatedPost["imgUrl"] = imgUrl;
+    }
     const result = (await getConnection()
       .createQueryBuilder()
       .update(Post)
-      .set({ title, text })
+      .set(updatedPost)
       .where('id = :id and "creatorId" = :creatorId', {
         id,
         creatorId: req.session.userId,

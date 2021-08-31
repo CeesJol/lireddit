@@ -4,6 +4,7 @@ query Post($id: Int!) {
     createdAt
     updatedAt
     title
+    imgUrl
     text
     points
     voteStatus

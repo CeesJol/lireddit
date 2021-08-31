@@ -1,7 +1,7 @@
 import { Box, Button } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import { InputField } from "../../../components/InputField";
 import { useCreatePostMutation } from "../../../generated/graphql";
 import { useIsAuth } from "../../../util/useIsAuth";
@@ -15,12 +15,24 @@ export const CreatePost: React.FC<{}> = ({}) => {
   const title: string | undefined = router.query.title as never;
   useIsAuth();
   const [createPost] = useCreatePostMutation();
+
+  const [url, setUrl] = useState<string>("");
+  const urlCallbackParent = (url: string) => {
+    setUrl(url);
+  };
+
   return (
     <Layout>
       <Wrapper variant="small">
         <Formik
-          initialValues={{ title: "", text: "", subredditTitle: title }}
+          initialValues={{
+            title: "",
+            imgUrl: "",
+            text: "",
+            subredditTitle: title,
+          }}
           onSubmit={async (values) => {
+            values["imgUrl"] = url;
             const { errors } = await createPost({
               variables: { input: values },
               update: (cache) => {
@@ -38,6 +50,7 @@ export const CreatePost: React.FC<{}> = ({}) => {
               isSubmitting={isSubmitting}
               values={values}
               buttonText="Create post"
+              urlCallbackParent={urlCallbackParent}
             />
           )}
         </Formik>
