@@ -1,8 +1,6 @@
-import { Box, Button } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { InputField } from "../../../components/InputField";
 import { useCreatePostMutation } from "../../../generated/graphql";
 import { useIsAuth } from "../../../util/useIsAuth";
 import { withApollo } from "../../../util/withApollo";
@@ -41,7 +39,7 @@ export const CreatePost: React.FC<{}> = ({}) => {
             });
 
             if (!errors) {
-              router.push("/");
+              router.push(`/r/${title}`);
             }
           }}
         >

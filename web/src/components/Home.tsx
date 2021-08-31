@@ -77,7 +77,13 @@ const Home: React.FC<HomeProps> = ({ sort }) => {
               <Select
                 placeholder="Select option"
                 w={100}
-                onChange={(event) => changeSort(event, subredditTitle)}
+                onChange={(event) => {
+                  const newRoute = changeSort(
+                    event.target.value,
+                    subredditTitle
+                  );
+                  window.location.href = newRoute;
+                }}
                 value={sort}
                 mr={4}
               >
@@ -103,9 +109,26 @@ const Home: React.FC<HomeProps> = ({ sort }) => {
           </div>
         ) : (
           <Stack spacing={8}>
-            {data!.posts.posts.map((p) =>
-              !p ? null : (
-                <PostPreview p={p} subredditTitle={subredditTitle} key={p.id} />
+            {data!.posts.posts.length === 0 ? (
+              <div>
+                This subreddit has no posts yet. Click{" "}
+                <NextLink
+                  href="/r/[title]/create-post"
+                  as={`/r/${subredditTitle}/create-post`}
+                >
+                  <Link>here</Link>
+                </NextLink>{" "}
+                to create one!
+              </div>
+            ) : (
+              data!.posts.posts.map((p) =>
+                !p ? null : (
+                  <PostPreview
+                    p={p}
+                    subredditTitle={subredditTitle}
+                    key={p.id}
+                  />
+                )
               )
             )}
           </Stack>

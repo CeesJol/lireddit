@@ -1,15 +1,13 @@
-import router from "next/router";
-
 export const changeSort = (
-  event: React.ChangeEvent<HTMLSelectElement>,
+  sort: string,
   subredditTitle: string | undefined
 ) => {
   let result = "/";
   if (subredditTitle) {
     result += `r/${subredditTitle}/`;
   }
-  if (event.target.value === "top") {
+  if (sort === "top") {
     result += "top/";
   }
-  router.push(result);
+  return result;
 };
