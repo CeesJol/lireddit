@@ -59,7 +59,7 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
   >("not-loading");
   const [vote] = useVoteMutation();
   return (
-    <Flex direction="column" justifyContent="center" alignItems="center" mr={4}>
+    <Flex direction="column" alignItems="center" mr={4}>
       <IconButton
         onClick={async () => {
           if (post.voteStatus === 1) {

@@ -1,4 +1,12 @@
-import { Flex, Box, Link, Heading, Text, Image } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Link,
+  Heading,
+  Text,
+  Image,
+  Center,
+} from "@chakra-ui/react";
 import React from "react";
 import { PostSnippetFragment } from "../generated/graphql";
 import EditDeletePostButtons from "./EditDeletePostButtons";
@@ -39,7 +47,9 @@ export const PostComponent: React.FC<PostComponentProps> = ({
           )}
         </Text>
         {p.imgUrl ? (
-          <Image src={p.imgUrl} alt="Post image" mt={4} />
+          <Center>
+            <Image src={p.imgUrl} alt="Post image" mt={4} />
+          </Center>
         ) : (
           <Flex align="center">
             <Text flex={1} mt={4}>
