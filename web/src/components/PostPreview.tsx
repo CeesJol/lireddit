@@ -13,12 +13,12 @@ import EditDeletePostButtons from "./EditDeletePostButtons";
 import UpdootSection from "./UpdootSection";
 import NextLink from "next/link";
 
-interface PostComponentProps {
+interface PostPreviewProps {
   p: PostSnippetFragment;
   subredditTitle?: string | undefined;
 }
 
-export const PostComponent: React.FC<PostComponentProps> = ({
+export const PostPreview: React.FC<PostPreviewProps> = ({
   p,
   subredditTitle,
 }) => {
@@ -65,4 +65,4 @@ export const PostComponent: React.FC<PostComponentProps> = ({
   );
 };
 
-export default PostComponent;
+export default PostPreview;

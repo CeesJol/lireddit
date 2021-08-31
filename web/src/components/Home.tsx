@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Layout } from "../components/Layout";
-import PostComponent from "../components/PostComponent";
+import PostPreview from "./PostPreview";
 import { useMeQuery, usePostsQuery } from "../generated/graphql";
 import { changeSort } from "../util/changeSort";
 import NextLink from "next/link";
@@ -105,11 +105,7 @@ const Home: React.FC<HomeProps> = ({ sort }) => {
           <Stack spacing={8}>
             {data!.posts.posts.map((p) =>
               !p ? null : (
-                <PostComponent
-                  p={p}
-                  subredditTitle={subredditTitle}
-                  key={p.id}
-                />
+                <PostPreview p={p} subredditTitle={subredditTitle} key={p.id} />
               )
             )}
           </Stack>

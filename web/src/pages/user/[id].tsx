@@ -2,7 +2,7 @@ import { Box, Heading, Stack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
 import Layout from "../../components/Layout";
-import PostComponent from "../../components/PostComponent";
+import PostPreview from "../../components/PostPreview";
 import { Wrapper } from "../../components/Wrapper";
 import {
   useUserByIdQuery,
@@ -59,7 +59,7 @@ export const User = ({}) => {
                 <div>this user has no posts yet</div>
               ) : (
                 data!.postsFromUser.map((p) =>
-                  !p ? null : <PostComponent p={p} key={p.id} />
+                  !p ? null : <PostPreview p={p} key={p.id} />
                 )
               )}
             </Stack>
