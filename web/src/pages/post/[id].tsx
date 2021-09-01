@@ -65,7 +65,7 @@ export const Post = ({}) => {
       <Wrapper>
         <Heading mb={4}>{data.post.title}</Heading>
         {data.post.imgUrl && <Image src={data.post.imgUrl} alt="Post image" />}
-        <Box mb={4}>{data.post.text}</Box>
+        <Box my={4}>{data.post.text}</Box>
         <EditDeletePostButtons
           id={data.post.id}
           creatorId={data.post.creator.id}

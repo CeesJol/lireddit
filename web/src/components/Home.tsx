@@ -111,7 +111,8 @@ const Home: React.FC<HomeProps> = ({ sort }) => {
           <Stack spacing={8}>
             {data!.posts.posts.length === 0 ? (
               <div>
-                This subreddit has no posts yet. Click{" "}
+                {subredditTitle ? "This subreddit has no" : "There are no"}{" "}
+                posts yet. Click{" "}
                 <NextLink
                   href="/r/[title]/create-post"
                   as={`/r/${subredditTitle}/create-post`}

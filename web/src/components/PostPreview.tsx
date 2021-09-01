@@ -46,20 +46,20 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             </>
           )}
         </Text>
-        {p.imgUrl ? (
-          <Center>
-            <Image src={p.imgUrl} alt="Post image" mt={4} />
-          </Center>
-        ) : (
-          <Flex align="center">
+        <Flex align="center">
+          {p.imgUrl ? (
+            <Center flex={1}>
+              <Image src={p.imgUrl} alt="Post image" mt={4} />
+            </Center>
+          ) : (
             <Text flex={1} mt={4}>
               {p.textSnippet}
             </Text>
-            <Box ml="auto">
-              <EditDeletePostButtons id={p.id} creatorId={p.creator.id} />
-            </Box>
-          </Flex>
-        )}
+          )}
+          <Box ml={4}>
+            <EditDeletePostButtons id={p.id} creatorId={p.creator.id} />
+          </Box>
+        </Flex>
       </Box>
     </Flex>
   );
