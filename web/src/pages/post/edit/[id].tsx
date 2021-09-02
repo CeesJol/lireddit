@@ -14,6 +14,7 @@ import { createUrqlClient } from "../../../util/createUrqlClient";
 import { useGetIntId } from "../../../util/useGetIntId";
 import { Wrapper } from "../../../components/Wrapper";
 import { PostFormComponent } from "../../../components/PostFormComponent";
+import Head from "next/head";
 
 export const EditPost = ({}) => {
   const router = useRouter();
@@ -52,32 +53,37 @@ export const EditPost = ({}) => {
   }
 
   return (
-    <Layout>
-      <Wrapper variant="small">
-        <Formik
-          initialValues={{
-            title: data.post.title,
-            imgUrl: data.post.imgUrl,
-            text: data.post.text,
-            subredditTitle: data.post.subredditTitle,
-          }}
-          onSubmit={async (values) => {
-            values["imgUrl"] = url;
-            await updatePost({ variables: { id: intId, ...values } });
-            router.back();
-          }}
-        >
-          {({ isSubmitting, values }) => (
-            <PostFormComponent
-              isSubmitting={isSubmitting}
-              values={values}
-              buttonText="Update post"
-              urlCallbackParent={urlCallbackParent}
-            />
-          )}
-        </Formik>
-      </Wrapper>
-    </Layout>
+    <>
+      <Head>
+        <title>Edit Post | LiReddit</title>
+      </Head>
+      <Layout>
+        <Wrapper variant="small">
+          <Formik
+            initialValues={{
+              title: data.post.title,
+              imgUrl: data.post.imgUrl,
+              text: data.post.text,
+              subredditTitle: data.post.subredditTitle,
+            }}
+            onSubmit={async (values) => {
+              values["imgUrl"] = url;
+              await updatePost({ variables: { id: intId, ...values } });
+              router.back();
+            }}
+          >
+            {({ isSubmitting, values }) => (
+              <PostFormComponent
+                isSubmitting={isSubmitting}
+                values={values}
+                buttonText="Update post"
+                urlCallbackParent={urlCallbackParent}
+              />
+            )}
+          </Formik>
+        </Wrapper>
+      </Layout>
+    </>
   );
 };
 

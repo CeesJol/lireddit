@@ -54,8 +54,15 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     );
   }
   return (
-    <Flex zIndex={1} position="sticky" top={0} bg="tomato" p={4} align="center">
-      <Flex maxW={800} align="center" flex={1} m="auto" px={4}>
+    <Flex
+      zIndex={1}
+      position="sticky"
+      top={0}
+      bg="tomato"
+      py={4}
+      align="center"
+    >
+      <Flex maxW={800} align="center" flex={1} px={4} m="auto">
         <NextLink href="/">
           <Link>
             <Heading>LiReddit</Heading>

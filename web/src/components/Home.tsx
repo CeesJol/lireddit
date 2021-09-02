@@ -18,6 +18,7 @@ import { isServer } from "../util/isServer";
 // import Image from "next/image";
 import { Image } from "@chakra-ui/react";
 import { Wrapper } from "./Wrapper";
+import Head from "next/head";
 
 interface HomeProps {
   sort: "top" | "new";
@@ -55,114 +56,120 @@ const Home: React.FC<HomeProps> = ({ sort }) => {
   const { data: meData } = useMeQuery({ skip: isServer() });
 
   return (
-    <Layout>
-      {data && !loading && subredditTitle && (
-        <Image
-          src={`/subreddit_pic/${subredditTitle}.png`}
-          alt={`r/${subredditTitle} header image`}
-          width="100%"
-          height="180px"
-        />
-      )}
-      <Wrapper>
-        <Box mb={4}>
-          <Heading>
-            <b>{subredditTitle ? `r/${subredditTitle}` : "Posts"}</b>
-          </Heading>
-        </Box>
-        {data && (
-          <Flex align="center" mb={4}>
-            <Box mr={4}>Sort by:</Box>
-            <Box>
-              <Select
-                placeholder="Select option"
-                w={100}
-                onChange={(event) => {
-                  const newRoute = changeSort(
-                    event.target.value,
-                    subredditTitle
-                  );
-                  window.location.href = newRoute;
-                }}
-                value={sort}
-                mr={4}
-              >
-                <option value="new">New</option>
-                <option value="top">Top</option>
-              </Select>
-            </Box>
-            {subredditTitle && meData?.me?.id && (
-              <NextLink
-                href="/r/[title]/create-post"
-                as={`/r/${subredditTitle}/create-post`}
-              >
-                <Button as={Link}>create post</Button>
-              </NextLink>
-            )}
-          </Flex>
+    <>
+      <Head>
+        <title>{subredditTitle ? `r/${subredditTitle} | ` : ""}LiReddit</title>
+      </Head>
+
+      <Layout>
+        {data && !loading && subredditTitle && (
+          <Image
+            src={`/subreddit_pic/${subredditTitle}.png`}
+            alt={`r/${subredditTitle} header image`}
+            width="100%"
+            height="180px"
+          />
         )}
-        {!data && loading ? (
-          <div>loading...</div>
-        ) : !loading && !data ? (
-          <div>
-            <div>{error?.message}</div>
-          </div>
-        ) : (
-          <Stack spacing={8}>
-            {data!.posts.posts.length === 0 ? (
-              <div>
-                {subredditTitle ? "This subreddit has no" : "There are no"}{" "}
-                posts yet. Click{" "}
+        <Wrapper>
+          <Box my={4}>
+            <Heading>
+              <b>{subredditTitle ? `r/${subredditTitle}` : "Posts"}</b>
+            </Heading>
+          </Box>
+          {data && (
+            <Flex align="center" mb={4}>
+              <Box mr={4}>Sort by:</Box>
+              <Box>
+                <Select
+                  placeholder="Select option"
+                  w={100}
+                  onChange={(event) => {
+                    const newRoute = changeSort(
+                      event.target.value,
+                      subredditTitle
+                    );
+                    window.location.href = newRoute;
+                  }}
+                  value={sort}
+                  mr={4}
+                >
+                  <option value="new">New</option>
+                  <option value="top">Top</option>
+                </Select>
+              </Box>
+              {subredditTitle && meData?.me?.id && (
                 <NextLink
                   href="/r/[title]/create-post"
                   as={`/r/${subredditTitle}/create-post`}
                 >
-                  <Link>here</Link>
-                </NextLink>{" "}
-                to create one!
-              </div>
-            ) : (
-              data!.posts.posts.map((p) =>
-                !p ? null : (
-                  <PostPreview
-                    p={p}
-                    subredditTitle={subredditTitle}
-                    key={p.id}
-                  />
+                  <Button as={Link}>create post</Button>
+                </NextLink>
+              )}
+            </Flex>
+          )}
+          {!data && loading ? (
+            <div>loading...</div>
+          ) : !loading && !data ? (
+            <div>
+              <div>{error?.message}</div>
+            </div>
+          ) : (
+            <Stack spacing={8}>
+              {data!.posts.posts.length === 0 ? (
+                <div>
+                  {subredditTitle ? "This subreddit has no" : "There are no"}{" "}
+                  posts yet. Click{" "}
+                  <NextLink
+                    href="/r/[title]/create-post"
+                    as={`/r/${subredditTitle}/create-post`}
+                  >
+                    <Link>here</Link>
+                  </NextLink>{" "}
+                  to create one!
+                </div>
+              ) : (
+                data!.posts.posts.map((p) =>
+                  !p ? null : (
+                    <PostPreview
+                      p={p}
+                      subredditTitle={subredditTitle}
+                      key={p.id}
+                    />
+                  )
                 )
-              )
-            )}
-          </Stack>
-        )}
-        {data && data.posts.hasMore ? (
-          <Flex>
-            <Button
-              onClick={() => {
-                let sortSpecificVariables: SortSpecificVariablesOptions = {};
-                if (sort === "top") {
-                  sortSpecificVariables.offset = data!.posts.offset + 15;
-                } else {
-                  sortSpecificVariables.cursor =
-                    data!.posts.posts[data!.posts.posts.length - 1].createdAt;
-                }
-                fetchMore({
-                  variables: {
-                    limit: variables?.limit,
-                    sort: sort,
-                    ...sortSpecificVariables,
-                  },
-                });
-              }}
-              isLoading={loading}
-              m="auto"
-              my={8}
-            >
-              load more
-            </Button>
-          </Flex>
-        ) : null}
-      </Wrapper>
-    </Layout>
+              )}
+            </Stack>
+          )}
+          {data && data.posts.hasMore ? (
+            <Flex>
+              <Button
+                onClick={() => {
+                  let sortSpecificVariables: SortSpecificVariablesOptions = {};
+                  if (sort === "top") {
+                    sortSpecificVariables.offset = data!.posts.offset + 15;
+                  } else {
+                    sortSpecificVariables.cursor =
+                      data!.posts.posts[data!.posts.posts.length - 1].createdAt;
+                  }
+                  fetchMore({
+                    variables: {
+                      limit: variables?.limit,
+                      sort: sort,
+                      ...sortSpecificVariables,
+                    },
+                  });
+                }}
+                isLoading={loading}
+                m="auto"
+                my={8}
+              >
+                load more
+              </Button>
+            </Flex>
+          ) : null}
+        </Wrapper>
+      </Layout>
+    </>
   );
 };
 

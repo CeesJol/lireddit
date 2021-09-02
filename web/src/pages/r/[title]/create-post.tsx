@@ -7,6 +7,7 @@ import { withApollo } from "../../../util/withApollo";
 import Layout from "../../../components/Layout";
 import { Wrapper } from "../../../components/Wrapper";
 import { PostFormComponent } from "../../../components/PostFormComponent";
+import Head from "next/head";
 
 export const CreatePost: React.FC<{}> = ({}) => {
   const router = useRouter();
@@ -20,40 +21,45 @@ export const CreatePost: React.FC<{}> = ({}) => {
   };
 
   return (
-    <Layout>
-      <Wrapper variant="small">
-        <Formik
-          initialValues={{
-            title: "",
-            imgUrl: "",
-            text: "",
-            subredditTitle: title,
-          }}
-          onSubmit={async (values) => {
-            values["imgUrl"] = url;
-            const { errors } = await createPost({
-              variables: { input: values },
-              update: (cache) => {
-                cache.evict({ fieldName: "posts:{}" });
-              },
-            });
+    <>
+      <Head>
+        <title>Create Post | LiReddit</title>
+      </Head>
+      <Layout>
+        <Wrapper variant="small">
+          <Formik
+            initialValues={{
+              title: "",
+              imgUrl: "",
+              text: "",
+              subredditTitle: title,
+            }}
+            onSubmit={async (values) => {
+              values["imgUrl"] = url;
+              const { errors } = await createPost({
+                variables: { input: values },
+                update: (cache) => {
+                  cache.evict({ fieldName: "posts:{}" });
+                },
+              });
 
-            if (!errors) {
-              router.push(`/r/${title}`);
-            }
-          }}
-        >
-          {({ isSubmitting, values }) => (
-            <PostFormComponent
-              isSubmitting={isSubmitting}
-              values={values}
-              buttonText="Create post"
-              urlCallbackParent={urlCallbackParent}
-            />
-          )}
-        </Formik>
-      </Wrapper>
-    </Layout>
+              if (!errors) {
+                router.push(`/r/${title}`);
+              }
+            }}
+          >
+            {({ isSubmitting, values }) => (
+              <PostFormComponent
+                isSubmitting={isSubmitting}
+                values={values}
+                buttonText="Create post"
+                urlCallbackParent={urlCallbackParent}
+              />
+            )}
+          </Formik>
+        </Wrapper>
+      </Layout>
+    </>
   );
 };
 

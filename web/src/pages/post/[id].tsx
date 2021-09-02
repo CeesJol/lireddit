@@ -63,7 +63,7 @@ export const Post = ({}) => {
   return (
     <Layout>
       <Wrapper>
-        <Heading mb={4}>{data.post.title}</Heading>
+        <Heading my={4}>{data.post.title}</Heading>
         {data.post.imgUrl && <Image src={data.post.imgUrl} alt="Post image" />}
         <Box my={4}>{data.post.text}</Box>
         <EditDeletePostButtons
@@ -71,7 +71,7 @@ export const Post = ({}) => {
           creatorId={data.post.creator.id}
         />
         <br />
-        <Heading size="md" mb={4}>
+        <Heading size="md">
           Comments {data2?.comments ? `(${data2.comments.length})` : ""}
         </Heading>
 
@@ -104,7 +104,7 @@ export const Post = ({}) => {
           >
             {({ isSubmitting, values }) => (
               <Form>
-                <Box mt={4}>
+                <Box pt={4}>
                   <InputField textarea name="text" placeholder="text..." />
                 </Box>
                 <Button
