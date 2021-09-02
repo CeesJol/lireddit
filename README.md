@@ -1,4 +1,3 @@
-<center>
 <h1>
   <br />
   <a href="https://lireddit.ceesjol.nl/"><img src="https://raw.githubusercontent.com/CeesJol/lireddit/main/web/public/lireddit_logo.png" alt="LiReddit" width="200"></a>
@@ -17,8 +16,6 @@
 <a href="#installing">Installing</a>
 
 ![screenshot](https://raw.githubusercontent.com/CeesJol/lireddit/main/web/public/preview.png)
-
-</center>
 
 ## Source
 
