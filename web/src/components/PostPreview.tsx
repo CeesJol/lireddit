@@ -1,17 +1,17 @@
 import {
-  Flex,
   Box,
-  Link,
-  Heading,
-  Text,
-  Image,
   Center,
+  Flex,
+  Heading,
+  Image,
+  Link,
+  Text,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import React from "react";
 import { PostSnippetFragment } from "../generated/graphql";
 import EditDeletePostButtons from "./EditDeletePostButtons";
 import UpdootSection from "./UpdootSection";
-import NextLink from "next/link";
 
 interface PostPreviewProps {
   p: PostSnippetFragment;
@@ -40,9 +40,12 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <>
               {" "}
               in{" "}
-              <NextLink href="/r/[title]" as={`/r/${p.subredditTitle}`}>
-                <Link>{`r/${p.subredditTitle}`}</Link>
-              </NextLink>
+              {/* Not a NextLink because otherwise that doesn't invalidate the cache.
+              Not sure how to invalidate it here.
+              Consequence is a full refresh... Oh well. */}
+              <a href={`/r/${p.subredditTitle}`}>
+                <Link>r/{p.subredditTitle}</Link>
+              </a>
             </>
           )}
         </Text>

@@ -5,6 +5,7 @@ import { NextPageContext } from "next";
 
 const createClient = (ctx: NextPageContext) =>
   new ApolloClient({
+    connectToDevTools: true,
     uri: process.env.NEXT_PUBLIC_API_URL as string,
     credentials: "include",
     headers: {
